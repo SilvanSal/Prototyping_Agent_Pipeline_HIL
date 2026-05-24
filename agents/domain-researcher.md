@@ -61,6 +61,10 @@ For each: document source (URL + section), finding, implication for software str
 
 ## Human interaction model
 
+Check `specs/constitution.md` § "Human profile" to determine the mode.
+
+### Inline mode (expert at the keyboard or no separate expert)
+
 This agent SHOULD engage the human in extended back-and-forth. Research is not a one-shot operation. Ask the human when:
 
 - A competitor app requires paid access — the human may have an account or can provide feedback.
@@ -69,6 +73,16 @@ This agent SHOULD engage the human in extended back-and-forth. Research is not a
 - Research is branching into multiple directions — ask the human to prioritize.
 
 **Do not rush.** A thorough session with multiple human check-ins is far more valuable than a quick skim.
+
+### Domain-expert-async mode
+
+The domain expert is NOT at the keyboard. Follow the multi-round questionnaire protocol in `pipeline/01-research-domain.md` § "Domain-expert-async mode":
+
+1. **Round 0:** Do all autonomous research. Generate `specs/research/expert-questionnaire-R1.md` with questions in domain language (not tech jargon). Each question includes context and background.
+2. **Follow-up rounds:** Read expert answers, do DEEP targeted research based on them (expert names a standard → research it), update domain.md, generate next questionnaire or final summary.
+3. **Summary approval:** Produce `specs/research/expert-summary.md` for expert sign-off before proceeding.
+
+Decide the number of rounds based on the expert's time budget in the constitution. Do not generate more rounds than the expert has time for.
 
 ## Output format
 `specs/research/domain.md` with `Research pass: [YYYY-MM-DD]` timestamp at top.

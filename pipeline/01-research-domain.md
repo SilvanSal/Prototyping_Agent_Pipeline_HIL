@@ -88,6 +88,112 @@ Regardless of whether traps exist, create `specs/error-registry.md` from `templa
 
 Skip both seeds only if the domain has no known documented traps AND you cannot create the empty error-registry file for some reason (log why in your output).
 
+## Domain-expert-async mode
+
+**Applies when:** `specs/constitution.md` § "Human profile" has `domain-expert-async` set for domain expert availability. The pipeline operator (developer) is at the keyboard but a separate domain expert is not. The expert's input is gathered via questionnaire rounds that the operator relays.
+
+### How it works
+
+The Domain-Researcher runs a **multi-round loop**:
+
+```
+Round 0: Autonomous research (no expert input yet)
+  - Do ALL research: papers, competitors, prior art, architectural implications
+  - Identify what you're uncertain about, what requires domain confirmation
+  - Decide how many questionnaire rounds are needed (see "Round budget" below)
+  - Generate Round 1 questionnaire → specs/research/expert-questionnaire-R1.md
+
+[PAUSE — operator sends questionnaire to expert, answers come back]
+
+Round 1: Incorporate answers + targeted follow-up research
+  - Read expert-answers-R1.md
+  - Do DEEP follow-up research specifically based on answers
+    (expert says "we use ISO 19650" → research ISO 19650 thoroughly)
+  - Update domain.md with new findings
+  - If more rounds needed: generate next questionnaire → expert-questionnaire-R2.md
+  - If sufficient: produce summary for expert approval
+
+[PAUSE — repeat if more rounds needed]
+
+Final: Summary approval
+  - Write a plain-language summary of all research findings and architectural implications
+  - The operator relays this to the expert for approval
+  - Expert confirms "yes, you got it right" or provides corrections
+  - Finalize domain.md
+```
+
+### Round budget
+
+Before generating the first questionnaire, the researcher MUST decide how many rounds are appropriate. Read the expert's time budget from `specs/constitution.md` § "Human profile" and plan accordingly:
+
+- **~30 minutes available:** 1 questionnaire round (10-15 well-crafted questions) + 1 summary approval. Keep questions broad.
+- **~1 hour available:** 2 questionnaire rounds (8-12 questions each) + 1 summary approval. First round covers breadth; second round digs into specifics based on answers.
+- **~2+ hours available:** 2-3 questionnaire rounds + 1 summary approval. Can afford exploratory questions and deep follow-up threads.
+
+State the planned round count and reasoning at the top of the first questionnaire. The operator can override if the expert has more or less time than expected.
+
+### Questionnaire format
+
+Each questionnaire is a standalone markdown file that can be printed, emailed, or read over a call. It must be understandable WITHOUT technical jargon — the expert is a domain person, not a developer.
+
+```markdown
+# Domain Expert Questionnaire — Round [N]
+_Project: [name] · Date: [YYYY-MM-DD] · Estimated time: [X] minutes_
+_Planned rounds: [N of M] · Why this round: [one sentence]_
+
+## Context
+[2-3 sentences: what we're building, what we've researched so far,
+ what this round of questions is trying to clarify]
+
+## Questions
+
+### 1. [Topic — in domain language, not tech language]
+**Why we're asking:** [The research finding or uncertainty that prompted this question]
+**Background:** [What we found so far — enough that the expert can give an informed answer]
+
+A. [Option — described in domain terms]
+B. [Option — described in domain terms]  [recommend: reason]
+C. [Option — described in domain terms]
+Other: _______
+
+[Space for free-text elaboration: "Please add any context we're missing:"]
+
+### 2. ...
+
+## If you have extra time
+[2-3 open-ended prompts for bonus context the expert might volunteer:
+ "Are there industry practices we haven't mentioned?"
+ "What's the most common mistake newcomers to this domain make?"]
+```
+
+### What triggers follow-up research
+
+When expert answers come back, the researcher does NOT just record them. It MUST do targeted deep research based on the answers:
+
+- Expert names a specific standard, regulation, or tool → research it thoroughly (same deep reading protocol as Section 4)
+- Expert says "it depends on X" → research the X dimension
+- Expert corrects a research finding → re-examine the source, update domain.md
+- Expert provides an answer the researcher didn't anticipate → assess whether it has architectural implications and update Section 7
+
+This follow-up research is what makes multi-round questionnaires valuable — each round gets smarter because the researcher learns from the previous answers.
+
+### Artifacts produced
+
+In addition to the standard Stage 01 artifacts:
+- `specs/research/expert-questionnaire-R[N].md` — one per round sent to the expert
+- `specs/research/expert-answers-R[N].md` — the operator creates this file with the expert's answers (can be verbatim transcript, filled-in questionnaire, or summary notes)
+- `specs/research/expert-summary.md` — final plain-language summary the expert approves before the pipeline proceeds
+
+### Summary approval gate
+
+After the last questionnaire round, the researcher produces `specs/research/expert-summary.md` — a plain-language summary of:
+1. What we understand about the domain (key findings)
+2. What architectural implications we extracted (phrased in domain terms, not tech terms)
+3. What decisions the expert made and how they affect the software
+4. What we're still uncertain about (if anything)
+
+The operator relays this to the expert. The expert either approves or provides corrections. Only after approval does the pipeline proceed to Stage 03.
+
 ## Rules for this stage
 
 - **Do not propose an architecture.** That is stage 04's job. However, you MUST extract and document architectural *implications* from research — facts and findings that will constrain or shape the architecture. There is a critical difference: "use a microservices architecture" is proposing architecture (forbidden); "the literature identifies 4 complexity classes requiring different algorithms, which implies a routing stage" is extracting an implication (required).
@@ -96,11 +202,12 @@ Skip both seeds only if the domain has no known documented traps AND you cannot 
 - **Cite sources.** Every claim about a competitor, a paper, or a regulation must have a URL. Unsourced claims get deleted by the reviewer.
 - **Pin timestamps.** At the top of the file, write `Research pass: [YYYY-MM-DD]`. Domain research ages — downstream stages decide whether to trust or refresh.
 - **Use browser tools actively** for competitor UX study and free tool exploration. Do not just read about tools — use them.
-- **Ask the human when blocked.** If a tool requires paid access, if a concept is unclear, or if the research is branching — pause and ask. Extended back-and-forth is expected and encouraged.
+- **Ask the human when blocked** (inline mode) or **add to the questionnaire** (async mode). If a tool requires paid access, if a concept is unclear, or if the research is branching — pause and ask (inline) or generate a question (async). Extended back-and-forth is expected and encouraged in inline mode.
 - **Read papers thoroughly.** "URL + one-paragraph distillation" is insufficient. Every significant paper gets a detailed multi-paragraph summary. Follow up on unfamiliar concepts.
 - **Extract architectural implications.** Every source (paper, competitor, specification) should be examined for findings that would constrain or shape the software's structure. Document these explicitly in section 7.
+- **In async mode: do deep follow-up research after every answer round.** Do not just record answers — research what the expert told you. Each round should make the research materially better.
 
-## Orchestrator dispatch prompt (copy verbatim)
+## Orchestrator dispatch prompt — inline mode (copy verbatim)
 
 > You are the Domain-Researcher subagent. You have a fresh context window. Read ONLY these files: `specs/constitution.md`, and the user's original brief (attached below).
 >
@@ -118,6 +225,35 @@ Skip both seeds only if the domain has no known documented traps AND you cannot 
 >
 > When you are done, output the file paths (including the two optional seeds) and a 5-bullet summary of the key findings, plus a separate summary of architectural implications discovered. Stop.
 
+## Orchestrator dispatch prompt — domain-expert-async mode (copy verbatim)
+
+> You are the Domain-Researcher subagent. You have a fresh context window. Read: `specs/constitution.md` (note the Human Profile section — this project has an async domain expert), and the user's original brief (attached below).
+>
+> Your job: produce `specs/research/domain.md` following the structure in `pipeline/01-research-domain.md`. Read that pipeline file's "Domain-expert-async mode" section carefully.
+>
+> **Round 0 (this invocation):** Do ALL autonomous research first — papers, competitors, prior art, architectural implications. Use the full deep reading protocol. Then:
+> 1. Decide how many questionnaire rounds are needed based on the expert's time budget in the constitution.
+> 2. Generate `specs/research/expert-questionnaire-R1.md` using the format in `pipeline/01-research-domain.md`. Questions must be in domain language, not tech jargon. Each question must include context (why we're asking) and background (what we found).
+> 3. Write a preliminary `specs/research/domain.md` with what you know so far — mark sections where expert input is needed as `_PENDING EXPERT INPUT_`.
+>
+> Also seed `specs/error-registry.md` and optionally `specs/research/hallucination-traps.md` per standard protocol.
+>
+> Output all file paths and a summary of what the questionnaire covers and why. Stop and wait for expert answers.
+
+## Orchestrator dispatch prompt — domain-expert-async follow-up round (copy verbatim)
+
+> You are the Domain-Researcher subagent, follow-up round [N]. Fresh context. Read: `specs/constitution.md`, `specs/research/domain.md` (your prior draft), `specs/research/expert-answers-R[N-1].md` (the expert's latest answers).
+>
+> Your job:
+> 1. Do DEEP targeted research based on the expert's answers. If the expert named a standard, regulation, or tool — research it thoroughly. If the expert corrected a finding — re-examine the source.
+> 2. Update `specs/research/domain.md` — fill in `_PENDING EXPERT INPUT_` sections and add new findings from the follow-up research. Update Section 7 (architectural implications) if the answers revealed new structural constraints.
+> 3. If more rounds remain: generate `specs/research/expert-questionnaire-R[N].md` with follow-up questions informed by the answers AND your new research.
+> 4. If this is the last round: generate `specs/research/expert-summary.md` — a plain-language summary for expert approval.
+>
+> Output file paths and a summary of what changed. Stop.
+
 ## Stop condition
 
-File `specs/research/domain.md` exists, has all 8 sections filled or explicitly marked "none identified" with reasoning, every factual claim has a source URL, and the timestamp is at the top. Section 4 (academic prior art) contains detailed multi-paragraph summaries for each significant paper — not just one-line distillations. Section 7 (architectural implications) is present and non-empty for any domain with research literature. `specs/error-registry.md` exists (empty or with the delete-me example). `specs/research/hallucination-traps.md` exists if 1–5 documented traps were found; otherwise is skipped with a one-line reason in the Domain-Researcher's output.
+**Inline mode:** File `specs/research/domain.md` exists, has all 8 sections filled or explicitly marked "none identified" with reasoning, every factual claim has a source URL, and the timestamp is at the top. Section 4 (academic prior art) contains detailed multi-paragraph summaries for each significant paper — not just one-line distillations. Section 7 (architectural implications) is present and non-empty for any domain with research literature. `specs/error-registry.md` exists (empty or with the delete-me example). `specs/research/hallucination-traps.md` exists if 1–5 documented traps were found; otherwise is skipped with a one-line reason in the Domain-Researcher's output.
+
+**Async mode:** All of the above, plus: at least one `expert-questionnaire-R[N].md` and corresponding `expert-answers-R[N].md` exist. `specs/research/expert-summary.md` exists and has been approved by the domain expert (operator confirms approval). No `_PENDING EXPERT INPUT_` markers remain in `domain.md`.

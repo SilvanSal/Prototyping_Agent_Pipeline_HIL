@@ -8,6 +8,19 @@
 
 Collapse the ambiguity uncovered in stages 00–02 into explicit user decisions before the Architect designs anything. This is the single most important gate in the pipeline. Skipping it forces the Architect to guess, which produces designs that look plausible but don't match user intent.
 
+## Adapting to the human profile
+
+Check `specs/constitution.md` § "Human profile" before generating questions.
+
+- **Domain expert inline or developer:** All questions go to the person at the keyboard. Standard behavior.
+- **Domain expert async:** Many domain decisions may already be answered in `specs/research/expert-answers-R*.md` and confirmed via `specs/research/expert-summary.md`. Before generating your clarify questions:
+  1. Read all `specs/research/expert-answers-R*.md` files and `specs/research/expert-summary.md`.
+  2. For each question you would normally ask: check whether the expert already answered it. If yes, pre-fill the answer with a citation (`"Answered by domain expert in R1 Q3: [answer]"`) and do NOT re-ask it.
+  3. Remaining questions split into two categories:
+     - **Domain questions the expert didn't cover** — if the expert is still reachable, the operator can relay these. Flag them as `[expert-needed]`.
+     - **Technical questions** (deployment target, API style, performance targets) — ask the pipeline operator directly. These are developer decisions, not domain decisions.
+  4. If the pipeline operator is not the domain expert AND the operator cannot answer domain questions, record `"deferred — no domain expert available for this question"` so the Architect knows it was unresolved.
+
 ## The A/B/C/D format (non-negotiable)
 
 Every question you ask must:

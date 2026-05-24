@@ -14,6 +14,21 @@ _Created: [YYYY-MM-DD] · Last updated: [YYYY-MM-DD]_
 4. Sub-agent return = final artifact path + one-paragraph delta, not a running commentary.
 5. Stop-and-commit between stages.
 
+## Human profile
+
+Who is the human in the loop for this project? This determines how stages communicate and gather input.
+
+- **Pipeline operator:** _[developer / product-owner / domain-expert-async]_
+  - `developer` — technically fluent, runs the pipeline, reviews code-level decisions. Default.
+  - `product-owner` — understands the product but not the codebase. Can approve plans and make feature decisions. Cannot review code.
+  - `domain-expert-async` — deep domain knowledge but not available in real-time during the pipeline. Input is gathered via structured questionnaire rounds between stages. See below.
+- **Domain expert available?** _[yes-inline / yes-async / no]_
+  - `yes-inline` — the pipeline operator IS the domain expert, or the expert is co-piloting. Stages 01 and 03 run interactively.
+  - `yes-async` — a separate domain expert is available but not at the keyboard. The pipeline generates questionnaire rounds, the operator relays them, answers come back as a file.
+  - `no` — no domain expert. The pipeline does its best with public research only.
+- **Expert's domain:** _[one sentence — e.g., "20 years in pharmaceutical compliance" or "n/a"]_
+- **Expert's time budget:** _[e.g., "~1 hour across 2-3 rounds" or "unlimited" or "n/a"]_
+
 ## Non-negotiables (project-specific)
 
 Rules that cannot be traded off during design or execution. Each must be testable or auditable. These add to the pipeline invariants above — they may not weaken them.

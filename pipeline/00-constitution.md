@@ -13,10 +13,15 @@ Pin down the non-negotiable rules for this project before any research or design
 Copy `templates/constitution.md` into `specs/constitution.md` and fill in:
 
 1. **Project identity** — one paragraph. What the app is. Who the user is. What it is NOT (scope exclusions).
-2. **Non-negotiables** — 3 to 7 rules that cannot be traded off during design or execution. Examples: "all user data encrypted at rest", "works offline", "no external paid APIs", "accessible to screen readers". Be specific. "High quality" is not a non-negotiable.
-3. **Tech-stack locks** — only if the user has already committed to specific tech. If they haven't, leave this section empty; stage 02 will write it.
-4. **Compliance / legal constraints** — GDPR, HIPAA, license compatibility, data residency. Empty is OK if none apply.
-5. **Non-goals** — explicit anti-features. "We are NOT building multi-tenant." "We do NOT support IE11."
+2. **Human profile** — who is operating the pipeline and who (if anyone) is the domain expert. Ask the user:
+   - Are you the domain expert, or is there a separate person with deep domain knowledge?
+   - If separate: will that person be available during the pipeline (inline), or do we need to gather their input asynchronously via questionnaires?
+   - If async: roughly how much time can the expert give, and across how many rounds?
+   This determines how Stage 01 (domain research) and Stage 03 (clarify) behave. See `templates/constitution.md` § "Human profile" for the field definitions.
+3. **Non-negotiables** — 3 to 7 rules that cannot be traded off during design or execution. Examples: "all user data encrypted at rest", "works offline", "no external paid APIs", "accessible to screen readers". Be specific. "High quality" is not a non-negotiable.
+4. **Tech-stack locks** — only if the user has already committed to specific tech. If they haven't, leave this section empty; stage 02 will write it.
+5. **Compliance / legal constraints** — GDPR, HIPAA, license compatibility, data residency. Empty is OK if none apply.
+6. **Non-goals** — explicit anti-features. "We are NOT building multi-tenant." "We do NOT support IE11."
 
 ## Gates
 
