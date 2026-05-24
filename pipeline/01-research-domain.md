@@ -40,7 +40,7 @@ Copy `templates/knowledge.md` layout (but save as `specs/research/domain.md`) an
 5. **Known failure modes** — what goes wrong for users of existing solutions? Security issues, UX frustrations, performance cliffs, data-loss patterns. 3–7 items.
 6. **Regulatory / legal surface** — GDPR, COPPA, HIPAA, PCI, accessibility mandates, content moderation obligations. One paragraph or "none identified" with reasoning.
 7. **Architectural implications extracted from research** — see dedicated section below. This is a critical new section.
-8. **Open questions for the user** — numbered A/B/C/D format. These feed directly into stage 03.
+8. **Open questions for the user** — numbered A/B/C/D format. These feed directly into stage 03. **Must include questions derived from architectural implications** (section 7). For every implication that involves a choice or scope decision, generate a clarify question so the Architect in Stage 04 gets the answer pre-resolved. Example: if the research finds "4 complexity classes each requiring different algorithms," the open questions must include something like "Which complexity classes does your use case require? A. Simple rule matching only. B. Rule matching + constraint propagation. C. All four classes. D. Unsure — need to support all as a safety net."
 
 ## Section 4 — Academic / technical prior art (deep reading protocol)
 

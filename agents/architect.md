@@ -9,7 +9,7 @@ model: sonnet
 
 ## Reads (in this order)
 1. `specs/constitution.md`
-2. `specs/research/domain.md`
+2. `specs/research/domain.md` — **pay special attention to Section 7 ("Architectural implications extracted from research")**
 3. `specs/clarify-[feature].md`
 4. `tech-stack.md` (if filled and not `_TBD_`)
 
@@ -36,6 +36,7 @@ model: sonnet
 - Sub-agent return = digest, not transcript. Incorporate the child's findings into `design.md`; do not forward its full output.
 - Respect clarify answers literally. User chose B → design for B. No silent upgrades.
 - Respect constitution non-negotiables. If a design choice would violate one, stop and raise it.
+- **Address every architectural implication.** For each implication in Section 7 of `specs/research/domain.md`, the design must either incorporate it (with an explicit reference to the source finding) or state why it doesn't apply with reasoning. Do not silently ignore implications — they represent research-backed structural constraints. If an implication identifies problem taxonomies or complexity classes, the architecture must show how it routes or handles each relevant class (as scoped by the user's clarify answers).
 - One feature at a time. No monolithic multi-feature design.
 - Reject designing capabilities not covered by clarify — surface as a gap.
 - Link, don't copy. Reference clarify / constitution by path.

@@ -30,7 +30,7 @@ Produce `specs/research/domain.md` with these 8 sections:
 5. Known failure modes — 3–7 items.
 6. Regulatory / legal surface — GDPR, COPPA, HIPAA, PCI, accessibility, etc., or "none identified" with reasoning.
 7. Architectural implications extracted from research — **critical section** (see below).
-8. Open questions for the user — numbered A/B/C/D format (feeds stage 03).
+8. Open questions for the user — numbered A/B/C/D format (feeds stage 03). **Must include questions derived from architectural implications** (section 7). Every implication that involves a choice or scope decision must generate a clarify question so the Architect gets the answer pre-resolved.
 
 ## Deep reading protocol (section 4)
 

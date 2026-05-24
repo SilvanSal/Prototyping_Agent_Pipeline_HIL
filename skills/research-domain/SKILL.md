@@ -17,7 +17,7 @@ allowed-tools: Read, Grep, Glob, WebSearch, WebFetch, Write, browser tools
 - If the user wants to go straight to design — route them to clarify (stage 03) instead and raise that domain research is missing.
 
 ## Produces
-`specs/research/domain.md` with 8 sections: problem framing, current solutions survey, user workflows, academic/technical prior art (detailed deep reading), known failure modes, regulatory/legal surface, architectural implications extracted from research, open questions (A/B/C/D format for stage 03).
+`specs/research/domain.md` with 8 sections: problem framing, current solutions survey, user workflows, academic/technical prior art (detailed deep reading), known failure modes, regulatory/legal surface, architectural implications extracted from research, open questions (A/B/C/D format for stage 03 — **must include questions derived from architectural implications** so the Architect gets scope/choice decisions pre-resolved).
 
 Also:
 - Always creates an empty `specs/error-registry.md` from `templates/error-registry.md` for the Coder to grow during Stage 07.

@@ -44,6 +44,7 @@ Translate research + clarifications into three named artifacts. Each has a diffe
 
 - **Respect the clarify answers literally.** If the user chose option B, design for option B. Do not silently upgrade to option C because it's "better".
 - **Respect the constitution's non-negotiables.** If a design choice violates a non-negotiable, stop and raise it — do not design around it without explicit user override.
+- **Address every architectural implication from domain research.** Read Section 7 ("Architectural implications extracted from research") of `specs/research/domain.md` carefully. For each implication listed, your design must either (a) incorporate it with an explicit reference to the finding, or (b) state why it doesn't apply to this feature, with reasoning. Do not silently ignore implications — they represent research-backed constraints on the software's structure. If an implication identifies problem taxonomies or complexity classes, your architecture must show how it routes or handles each relevant class (as scoped by the user's clarify answers).
 - **Design one feature at a time.** If the project has 5 features, run stage 04 five times. Do not produce a monolithic design covering everything.
 - **Reject features that weren't clarified.** If the user didn't answer questions about a capability, do not design it. Surface it as a gap.
 - **Link, don't copy.** The design references the clarify file and constitution by path, not by copy-pasting their contents.
@@ -52,9 +53,11 @@ Translate research + clarifications into three named artifacts. Each has a diffe
 
 ## Orchestrator dispatch prompt (copy verbatim)
 
-> You are the Architect subagent. Fresh context window. Read these files in this order: `specs/constitution.md`, `specs/research/domain.md`, `specs/clarify-[feature].md`, `tech-stack.md` (if it exists and is not `_TBD_`).
+> You are the Architect subagent. Fresh context window. Read these files in this order: `specs/constitution.md`, `specs/research/domain.md` (pay special attention to Section 7 — "Architectural implications extracted from research"), `specs/clarify-[feature].md`, `tech-stack.md` (if it exists and is not `_TBD_`).
 >
-> Your job: produce three files under `specs/[feature]/` — `requirements.md`, `design.md`, `eval-spec.md` — using the skeletons in `templates/`. You may also update `tech-stack.md` in the project root if it was deferred from stage 02. You may NOT read `specs/research/domain.md` sections beyond what you've already read, propose slices, or write application code.
+> Your job: produce three files under `specs/[feature]/` — `requirements.md`, `design.md`, `eval-spec.md` — using the skeletons in `templates/`. You may also update `tech-stack.md` in the project root if it was deferred from stage 02. You may NOT propose slices or write application code.
+>
+> **Critical:** For each architectural implication in Section 7 of `specs/research/domain.md`, your `design.md` must either incorporate it (with an explicit reference to the source finding) or state why it doesn't apply. Do not silently ignore any implication.
 >
 > When done, output the three file paths and a 3-bullet summary of the key design decisions. Stop.
 
