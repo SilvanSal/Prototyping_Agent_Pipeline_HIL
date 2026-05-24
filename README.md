@@ -47,7 +47,8 @@ Agentic_Coding_Pipeline/
 │   ├── 06-research-step.md
 │   ├── 07-execute-step.md
 │   ├── 08-review.md
-│   └── 09-write-handoff.md
+│   ├── 09-write-handoff.md
+│   └── 10-pipeline-critique.md
 ├── templates/                    # skeleton artifacts the stages fill in
 │   ├── constitution.md
 │   ├── requirements.md
@@ -58,7 +59,8 @@ Agentic_Coding_Pipeline/
 │   ├── knowledge.md
 │   ├── handoff.md
 │   ├── error-registry.md         # project-scoped bug memory, empty-seeded at stage 01, grown by Coder
-│   └── hallucination-traps.md    # project-scoped wrong/right-pattern lookup, optionally seeded at stage 01
+│   ├── hallucination-traps.md    # project-scoped wrong/right-pattern lookup, optionally seeded at stage 01
+│   └── pipeline-critique.md      # post-feature critique skeleton for stage 10
 ├── claude-md-template/           # target-project conventions (CLAUDE.md triad)
 │   ├── CLAUDE.md
 │   ├── tech-stack.md
@@ -84,7 +86,10 @@ Agentic_Coding_Pipeline/
 │   ├── code-reviewer.md
 │   ├── security-reviewer.md
 │   ├── browser-verifier.md
-│   └── handoff-writer.md
+│   ├── handoff-writer.md
+│   └── pipeline-critic.md
+├── PIPELINE_IMPROVEMENT_CRITIQUE/  # post-feature critiques — stage 10 output, one per feature
+│   └── README.md
 └── bootstrap/
     └── generate-claude-scaffolding.md   # meta-step: copies skills/ + agents/ into .claude/ and substitutes tokens
 ```
@@ -106,6 +111,9 @@ Each subagent reads only what its job requires. The orchestrator enforces this i
 | Security-Reviewer | v | — | — | — | — | — | — | — | v | — | — | — | — |
 | Browser-Verifier (end-of-feature only) | — | — | — | — | — | — | — | — | — | v | running app | — | — |
 | Handoff-Writer | — | — | — | — | — | v | — | — | v | v | — | — | — |
+| Pipeline-Critic (post-feature) | — | — | — | — | — | — | — | — | — | v | — | grep | — |
+
+*Pipeline-Critic also reads: `slice-plan.md`, `session-log.md`, all `review.md` and `handoff.md` files, and prior critiques in `PIPELINE_IMPROVEMENT_CRITIQUE/`.*
 
 ## When this pipeline is wrong for the task
 
