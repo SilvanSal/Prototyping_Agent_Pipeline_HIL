@@ -18,7 +18,7 @@ The pipeline is human-in-the-loop by design. Stages like domain research involve
 4. **Fresh context per stage.** Every stage runs in a new subagent with narrow tool access and a specified read-list. No stage reads the whole prior history — it reads named artifacts.
 5. **Plan one phase ahead, not the whole tree.** Vertical slices are planned coarse; the next slice's task breakdown is generated *after* the previous slice lands and its handoff is written.
 6. **Vertical slices, not backend-first.** Every slice ships a thin end-to-end piece of user-visible behavior, verified per-slice by automated tests. Chromium browser verification runs once at end-of-feature, not per slice — running it mid-build burns tokens on UI that is still in flux.
-7. **Stop-and-commit between steps.** Each executed step ends with a commit, a review cluster verdict, and a handoff written by a non-coder subagent. Then the session stops.
+7. **Commit between steps, auto-advance between stages.** Each executed step ends with a commit, a review cluster verdict, and a handoff. The orchestrator auto-advances to the next stage — the user never has to `/clear` or manually continue. The only pauses are at human gates (clarify, slice plan approval) and context overflow.
 8. **The handoff is the handoff.** The next step's coder reads only the previous step's `handoff.md`, not the previous step's full spec or code.
 9. **Differentiated reads per role.** A researcher does not read `best-practices.md`. A coder does not read raw domain research. See [read-access matrix](#read-access-matrix).
 10. **Evals are per step, written before code.** Each step-spec carries pass/fail criteria. The reviewer cluster checks against them.
@@ -28,8 +28,9 @@ The pipeline is human-in-the-loop by design. Stages like domain research involve
 
 1. Open a fresh Claude Code session in the target project directory (empty repo or greenfield).
 2. Paste or `@`-reference `00-START-HERE.md` from this pipeline directory.
-3. Follow the prompts. The pipeline is gated — the agent will stop and ask for input at each clarifying gate.
-4. Final output: a `specs/` directory + a `.claude/` directory in the target project.
+3. The pipeline runs automatically. It will pause only at human gates (clarify questions, slice plan approval). You never need to `/clear` or manually continue to the next stage — the orchestrator auto-advances.
+4. If the context window fills up, the orchestrator writes a continuation file (`specs/.pipeline-state/continue.md`). Start a fresh session and `@`-reference that file to pick up where it left off.
+5. After the feature ships, submit your Stage 10 critique as a [GitHub Issue](https://github.com/SilvanSal/Prototyping_Agent_Pipeline_HIL/issues/new?template=pipeline-critique.yml) to help improve the pipeline for everyone.
 
 ## Directory layout
 
@@ -115,10 +116,30 @@ Each subagent reads only what its job requires. The orchestrator enforces this i
 
 *Pipeline-Critic also reads: `slice-plan.md`, `session-log.md`, all `review.md` and `handoff.md` files, and prior critiques in `PIPELINE_IMPROVEMENT_CRITIQUE/`.*
 
+## Community flywheel
+
+This pipeline improves from aggregate evidence across projects. The more people run it on real projects and submit their Stage 10 critiques, the better the instructions get for everyone.
+
+### How to contribute
+
+After completing a feature, run Stage 10 (Pipeline Critic). Then submit your critique as a **GitHub Issue** using the [Pipeline Critique template](https://github.com/SilvanSal/Prototyping_Agent_Pipeline_HIL/issues/new?template=pipeline-critique.yml). Issues don't conflict with each other — every submission is independent, searchable, and taggable by domain.
+
+**What we learn from each submission:**
+- Which pipeline instructions caused friction (and which were clear)
+- Which domain types the pipeline handles well vs poorly
+- Whether the async domain-expert questionnaire rounds produced useful input
+- Which architectural implication categories mattered in practice
+
+**Privacy:** The critique template captures pipeline friction signals, not your project's code or business logic. Never include credentials, proprietary algorithms, or sensitive data.
+
+### What we're optimizing for
+
+This pipeline is designed for **deep domain complexity** — projects where getting the domain wrong means building the wrong thing. Compliance engines, medical device controllers, financial modeling tools, scientific data pipelines. If your project has academic literature, regulatory constraints, or domain-specific algorithms, this pipeline is for you.
+
+We are NOT optimizing for "build a todo app faster." There are better tools for that.
+
 ## When this pipeline is wrong for the task
 
 - Throwaway scripts, one-file tools, prototypes with <2 hours of work — the ceremony outweighs the value.
 - Exploratory research code where the goal is learning, not shipping.
 - Existing large codebases with strong established conventions — use only the review cluster and per-step research bits.
-
-

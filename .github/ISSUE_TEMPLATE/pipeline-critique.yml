@@ -1,0 +1,111 @@
+name: Pipeline Critique Submission
+description: Submit your Stage 10 pipeline critique after completing a feature. These submissions improve the pipeline for everyone.
+title: "[Critique] <domain> — <project-slug>"
+labels: ["critique", "community-data"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for submitting your pipeline critique! Every submission makes the pipeline better for the next person.
+
+        **Privacy:** Do not include proprietary code, credentials, or sensitive business logic. The critique template is designed to capture pipeline friction, not your project's secrets.
+
+  - type: input
+    id: domain
+    attributes:
+      label: Domain
+      description: What domain was the project in?
+      placeholder: e.g., pharmaceutical compliance, fintech, IoT fleet management
+    validations:
+      required: true
+
+  - type: dropdown
+    id: domain_complexity
+    attributes:
+      label: Domain complexity
+      description: How much domain-specific knowledge was needed?
+      options:
+        - Low (standard CRUD / web app)
+        - Medium (domain rules but well-documented)
+        - High (deep domain expertise required, academic literature involved)
+        - Very high (regulatory, multi-standard, novel algorithms)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: human_profile
+    attributes:
+      label: Human profile used
+      description: Who was the human in the loop?
+      options:
+        - Developer (inline)
+        - Domain expert (inline)
+        - Domain expert (async questionnaire)
+        - Product owner
+    validations:
+      required: true
+
+  - type: input
+    id: slices
+    attributes:
+      label: Number of slices completed
+      placeholder: e.g., 5
+    validations:
+      required: true
+
+  - type: textarea
+    id: quality_signals
+    attributes:
+      label: Quality signal summary
+      description: Copy the quality signal table from your PIPELINE_IMPROVEMENT_CRITIQUE/[feature]-[date].md
+      placeholder: |
+        | Signal | This run | Target |
+        |---|---|---|
+        | Block reviews | 0 | 0 |
+        | Pass-with-notes reviews | 2 | ≤ 1/slice |
+        | Micro-research escapes | 1 | ≤ 1/feature |
+        | Step-spec deviations | 0 | ≤ 1/feature |
+        | Error-registry entries | 1 | ≤ 1/feature |
+    validations:
+      required: true
+
+  - type: textarea
+    id: instruction_gaps
+    attributes:
+      label: Pipeline instruction gaps identified
+      description: Copy the "Pipeline instruction gaps" section. These are the most valuable data points for improving the pipeline.
+      placeholder: "Gap 1 — [what went wrong] → root: [which pipeline doc was unclear]..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestions
+    attributes:
+      label: Top suggested pipeline changes
+      description: Copy the top 3 suggestions from "Suggested pipeline doc changes"
+    validations:
+      required: true
+
+  - type: textarea
+    id: architectural_implications
+    attributes:
+      label: Architectural implications that mattered most
+      description: Which Section 7 findings from domain research actually influenced the design? Which were irrelevant?
+    validations:
+      required: false
+
+  - type: textarea
+    id: expert_questionnaire_feedback
+    attributes:
+      label: Expert questionnaire feedback (async mode only)
+      description: If you used async domain expert mode — how many rounds were needed? Were the questions well-phrased? Did the follow-up research based on answers add value?
+    validations:
+      required: false
+
+  - type: textarea
+    id: freeform
+    attributes:
+      label: Anything else
+      description: Pain points, surprises, things that worked better than expected
+    validations:
+      required: false

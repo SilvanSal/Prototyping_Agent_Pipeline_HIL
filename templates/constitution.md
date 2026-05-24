@@ -12,7 +12,7 @@ _Created: [YYYY-MM-DD] · Last updated: [YYYY-MM-DD]_
 2. Fresh context per stage: every stage runs in a new subagent with a narrow read-list.
 3. Sub-agent nesting cap: depth ≤ 1. A pipeline-stage subagent may spawn at most one level of further subagents, and only a read-only `Explore` for lookups. No `stage-agent → spawn → spawn` chains.
 4. Sub-agent return = final artifact path + one-paragraph delta, not a running commentary.
-5. Stop-and-commit between stages.
+5. Commit between stages, auto-advance. The orchestrator auto-chains stages — no manual `/clear` or continue needed except at human gates.
 
 ## Human profile
 
@@ -27,7 +27,7 @@ Who is the human in the loop for this project? This determines how stages commun
   - `yes-async` — a separate domain expert is available but not at the keyboard. The pipeline generates questionnaire rounds, the operator relays them, answers come back as a file.
   - `no` — no domain expert. The pipeline does its best with public research only.
 - **Expert's domain:** _[one sentence — e.g., "20 years in pharmaceutical compliance" or "n/a"]_
-- **Expert's time budget:** _[e.g., "~1 hour across 2-3 rounds" or "unlimited" or "n/a"]_
+- **Expert's availability pattern:** _[e.g., "available for async rounds, no hard time limit" or "single 1-hour session only" or "n/a"]_
 
 ## Non-negotiables (project-specific)
 

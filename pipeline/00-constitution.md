@@ -36,7 +36,7 @@ These are not project-specific choices — they're non-negotiables of the pipeli
 2. **Fresh context per stage.** Every stage runs in a new subagent with a narrow read-list.
 3. **Sub-agent nesting cap: depth ≤ 1.** A pipeline-stage subagent (Coder, Architect, Step-Researcher, etc.) may spawn **at most one** level of further subagents, and only a general-purpose `Explore` agent for read-only lookups. Forbidden: a Coder spawning an Architect; a Step-Researcher spawning a Coder; any two-deep chain (`stage-agent → spawn → spawn`). Rationale: open-claude-code caps nesting at depth 3 runtime-side; this pipeline is stricter because its stages already carry fresh-context isolation — deeper nesting is almost always a sign the stage is wrong, not that the task needs more agents. Violating this wastes tokens on re-reading context that the calling stage already holds.
 4. **Sub-agent return = final artifact path + one-paragraph delta, not a running commentary.** The parent only sees the child's final text, not its tool trace. If the parent needs detail, it comes from the committed artifact, not from the child's transcript.
-5. **Stop-and-commit between stages.** Each stage commits before returning.
+5. **Commit between stages, auto-advance.** Each stage commits before returning. The orchestrator auto-advances to the next stage — no manual intervention required except at human gates.
 
 The Architect and Slice-Planner do not get to trade these off. The constitution may add project-specific rules on top; it may not weaken these.
 

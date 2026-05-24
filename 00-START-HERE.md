@@ -28,21 +28,71 @@ You will run these in strict order. Each stage has a stop condition. Do not skip
      07a eval-harness        (conditional read)   only if step-spec has LLM evals
 08  review                  (Review cluster)     → specs/[feature]/slices/[N]/review.md
 09  write-handoff           (Handoff-Writer)     → specs/[feature]/slices/[N]/handoff.md
-                            → STOP. New session for next slice.
+                            → auto-advance to next slice (or end-of-feature)
 ─── end loop ───
+10  pipeline-critique       (Pipeline-Critic)    → PIPELINE_IMPROVEMENT_CRITIQUE/[feature]-[date].md
 ```
 
-After the first slice's handoff is written, **stop**. A new orchestrator session picks up by reading only the handoff, the next step-spec, and `CLAUDE.md`. The user starts that session manually — do not chain.
+**Auto-chain by default.** The orchestrator advances automatically from one stage to the next after each stop condition is met. It only pauses at human gates (see below). Between slices, the orchestrator continues into the next slice's stage 06 automatically — it does NOT stop and wait for the user to start a new session.
+
+**If context compaction fires** (the orchestrator's own conversation is getting too long), the orchestrator MUST write a continuation file before ending:
+
+```
+specs/.pipeline-state/continue.md
+```
+
+Contents: current stage, current slice, feature slug, and the exact dispatch prompt for the next stage. The user starts a fresh session and pastes `@specs/.pipeline-state/continue.md` — the new orchestrator picks up exactly where the old one left off. This is the ONLY scenario where the user has to manually intervene between stages.
+
+## Auto-chain and human gates
+
+The orchestrator advances automatically between stages. It pauses ONLY at human gates:
+
+| Gate | Where | What unblocks |
+|---|---|---|
+| Clarify | After stage 01 research completes | User answers A/B/C/D questions and says "Go" (stage 03) |
+| Async expert rounds | During stage 01 (async mode only) | Operator returns expert answers as `expert-answers-R[N].md` |
+| Slice plan approval | After stage 05 | User approves the slice plan |
+| Block verdict | After stage 08 review | Return to stage 07 with fixes |
+| Context overflow | Any point | Orchestrator writes `specs/.pipeline-state/continue.md` and stops |
+
+Between all other stages, the orchestrator dispatches the next subagent immediately. Between slices, it auto-advances to the next slice's stage 06 (after the drift check). After the final slice, it auto-dispatches Stage 10 (Pipeline Critic).
+
+**The user should never have to `/clear`, start a new session, or type "continue stage N."** If that happens, the orchestrator is broken.
+
+## Continuation protocol (context overflow only)
+
+If the orchestrator's conversation hits context limits (compaction fires or performance degrades), write `specs/.pipeline-state/continue.md` with:
+
+```markdown
+# Pipeline Continuation
+_Written: [YYYY-MM-DD HH:MM] · Reason: context overflow_
+
+## Resume from
+- **Stage:** [current stage number and name]
+- **Feature:** [feature slug]
+- **Slice:** [current slice ID, or "pre-slice" if in stages 00-05]
+- **Last completed artifact:** [file path of the last successfully produced artifact]
+
+## Next action
+[The exact dispatch prompt for the next stage — copy verbatim from the pipeline file]
+
+## State summary
+[3-5 bullet summary of what's been completed and any pending decisions]
+```
+
+The user starts a fresh session and references this file. The new orchestrator reads it and continues from that exact point.
 
 ## Hard rules for the orchestrator (you)
 
 1. **You cannot call Write or Edit on application code.** Only subagents dispatched from stage 07 may do that. You may write pipeline artifacts (`specs/**`).
 2. **You dispatch each subagent with an explicit read-list** drawn from the [read-access matrix in the README](README.md#read-access-matrix). If a subagent asks to read something outside its list, deny it and explain why.
 3. **You enforce the stop condition of each stage** before moving to the next. If a stage did not produce its named output file, do not advance.
-4. **You do not answer clarifying questions on the user's behalf.** If a stage needs user input, halt and surface the question.
-5. **You do not re-plan downstream slices from a single slice's learnings without re-running Slice-Planner.** If a slice reveals the plan is wrong, dispatch Slice-Planner again with the new handoff.
-6. **You run the pre-slice drift check before dispatching stage 06 for each slice N ≥ 2.** See § "Pre-slice drift check" below. Detection only — never silently update `tech-stack.md`, `slice-plan.md`, or any spec artifact.
-7. **You write the stage marker before every subagent dispatch.** This powers `.claude/hooks/restrict-reads.sh`, which enforces the read-access matrix at runtime instead of on the orchestrator's honor.
+4. **You auto-advance to the next stage** after each stop condition is met, unless a human gate requires input. Do not ask the user "should I proceed?" between automated stages — just go.
+5. **You do not answer clarifying questions on the user's behalf.** If a stage needs user input, halt and surface the question.
+6. **You do not re-plan downstream slices from a single slice's learnings without re-running Slice-Planner.** If a slice reveals the plan is wrong, dispatch Slice-Planner again with the new handoff.
+7. **You run the pre-slice drift check before dispatching stage 06 for each slice N ≥ 2.** See § "Pre-slice drift check" below. Detection only — never silently update `tech-stack.md`, `slice-plan.md`, or any spec artifact.
+8. **You write the stage marker before every subagent dispatch.** This powers `.claude/hooks/restrict-reads.sh`, which enforces the read-access matrix at runtime instead of on the orchestrator's honor.
+9. **If context overflow is imminent, write the continuation file and stop cleanly.** Do not degrade. Do not skip stages. Write the state, stop, and let a fresh session pick up.
 
 ## Stage marker protocol
 

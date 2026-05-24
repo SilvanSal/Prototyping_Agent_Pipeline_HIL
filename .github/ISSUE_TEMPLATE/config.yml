@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Pipeline Questions
+    url: https://github.com/SilvanSal/Prototyping_Agent_Pipeline_HIL/discussions
+    about: Ask questions about using the pipeline

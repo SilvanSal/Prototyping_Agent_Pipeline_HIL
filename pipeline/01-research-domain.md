@@ -122,15 +122,18 @@ Final: Summary approval
   - Finalize domain.md
 ```
 
-### Round budget
+### Round planning
 
-Before generating the first questionnaire, the researcher MUST decide how many rounds are appropriate. Read the expert's time budget from `specs/constitution.md` § "Human profile" and plan accordingly:
+Before generating the first questionnaire, the researcher must assess the domain's complexity and decide how to structure the rounds. There is no fixed round limit — **keep going until you genuinely understand everything you need.** A simple domain might need 1 round. A complex domain (compliance, medical, financial) might need 4-5.
 
-- **~30 minutes available:** 1 questionnaire round (10-15 well-crafted questions) + 1 summary approval. Keep questions broad.
-- **~1 hour available:** 2 questionnaire rounds (8-12 questions each) + 1 summary approval. First round covers breadth; second round digs into specifics based on answers.
-- **~2+ hours available:** 2-3 questionnaire rounds + 1 summary approval. Can afford exploratory questions and deep follow-up threads.
+After each round, the researcher evaluates: "Do I now understand the domain well enough that the Architect can design without guessing?" If no → generate another round with targeted follow-up questions informed by the latest answers and research. If yes → produce the summary for approval.
 
-State the planned round count and reasoning at the top of the first questionnaire. The operator can override if the expert has more or less time than expected.
+Guidelines for round structure:
+- **Round 1:** Broad — cover the major domain areas, terminology, workflows, constraints.
+- **Round 2+:** Targeted — dig into specifics surfaced by previous answers and the follow-up research they triggered.
+- **Final round:** Confirmation — present your understanding back to the expert to catch misunderstandings.
+
+State the current round count and what this round aims to clarify at the top of each questionnaire. Do not artificially limit rounds to save time — thoroughness is more important than speed.
 
 ### Questionnaire format
 

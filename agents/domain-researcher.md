@@ -82,7 +82,7 @@ The domain expert is NOT at the keyboard. Follow the multi-round questionnaire p
 2. **Follow-up rounds:** Read expert answers, do DEEP targeted research based on them (expert names a standard → research it), update domain.md, generate next questionnaire or final summary.
 3. **Summary approval:** Produce `specs/research/expert-summary.md` for expert sign-off before proceeding.
 
-Decide the number of rounds based on the expert's time budget in the constitution. Do not generate more rounds than the expert has time for.
+Keep generating rounds until you genuinely understand the domain well enough that the Architect can design without guessing. Do not artificially limit rounds.
 
 ## Output format
 `specs/research/domain.md` with `Research pass: [YYYY-MM-DD]` timestamp at top.
