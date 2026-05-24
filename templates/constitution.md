@@ -1,0 +1,50 @@
+# Constitution: [Project Name]
+
+_Created: [YYYY-MM-DD] · Last updated: [YYYY-MM-DD]_
+
+## Project identity
+
+[One paragraph. What the app is. Who the user is. What it is NOT.]
+
+## Pipeline invariants (carried from playbook — do not edit)
+
+1. Research before code: no Write/Edit on application code before stages 01–05 artifacts are committed.
+2. Fresh context per stage: every stage runs in a new subagent with a narrow read-list.
+3. Sub-agent nesting cap: depth ≤ 1. A pipeline-stage subagent may spawn at most one level of further subagents, and only a read-only `Explore` for lookups. No `stage-agent → spawn → spawn` chains.
+4. Sub-agent return = final artifact path + one-paragraph delta, not a running commentary.
+5. Stop-and-commit between stages.
+
+## Non-negotiables (project-specific)
+
+Rules that cannot be traded off during design or execution. Each must be testable or auditable. These add to the pipeline invariants above — they may not weaken them.
+
+1. [Rule] — _auditable via: [how]_
+2. [Rule] — _auditable via: [how]_
+3. [Rule] — _auditable via: [how]_
+
+## Tech-stack locks
+
+Specific tech the user has already committed to. Leave empty if the Architect is free to choose.
+
+- Language: _TBD / [lang + version]_
+- Runtime: _TBD / [runtime + version]_
+- Framework: _TBD / [framework + version]_
+- Database: _TBD / [db + version]_
+- Deployment target: _TBD / [target]_
+
+## Compliance / legal constraints
+
+[GDPR, HIPAA, license compatibility, data residency — or "none identified" with reasoning.]
+
+## Non-goals
+
+Explicit anti-features. The app will NOT do these, and stage 04 will not design for them.
+
+- [Anti-feature]
+- [Anti-feature]
+
+## Revision history
+
+| Date | Change | Reason |
+|---|---|---|
+| [YYYY-MM-DD] | Initial | Stage 00 |
