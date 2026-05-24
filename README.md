@@ -1,4 +1,6 @@
-# Agentic Coding Pipeline
+# Agentic Coding Pipeline_HIL
+
+**HIL = Human In The Loop.** For any non-trivial project, human feedback during the research and planning stages is not optional — it's what separates a useful pipeline from an LLM confidently building the wrong thing. The agent is explicitly designed to pause, ask, and incorporate human judgment at key decision points rather than racing to produce output.
 
 A reusable, stage-gated playbook you hand to an LLM coding agent so it bootstraps a disciplined research-then-execute pipeline for a new app. Not a framework. Not a runtime. A set of linked Markdown instructions plus templates plus a bootstrap step that emits a project-specific `.claude/` scaffolding into the target repo.
 
@@ -6,17 +8,21 @@ A reusable, stage-gated playbook you hand to an LLM coding agent so it bootstrap
 
 A **meta-pipeline**: the agent reads these files, runs them in order against a new project idea, and the output is (a) a filled-out `specs/` tree with research, requirements, design, eval specs, and vertical-slice plan, plus (b) a `.claude/` directory in the target project with skills, subagents, settings, and a `CLAUDE.md` triad that enforces the pipeline for every subsequent coding session.
 
+The pipeline is human-in-the-loop by design. Stages like domain research involve extended back-and-forth with the human — the agent asks for access to subscription-gated tools, confirms architectural implications, and requests prioritization when research branches. A thorough 45-minute research session with multiple human check-ins is far more valuable than a 5-minute skim.
+
 ## Guiding principles (non-negotiable)
 
 1. **Research before code.** No `Write` / `Edit` calls until domain research, codebase discovery, requirements, design, and eval spec are committed.
-2. **Fresh context per stage.** Every stage runs in a new subagent with narrow tool access and a specified read-list. No stage reads the whole prior history — it reads named artifacts.
-3. **Plan one phase ahead, not the whole tree.** Vertical slices are planned coarse; the next slice's task breakdown is generated *after* the previous slice lands and its handoff is written.
-4. **Vertical slices, not backend-first.** Every slice ships a thin end-to-end piece of user-visible behavior, verified per-slice by automated tests. Chromium browser verification runs once at end-of-feature, not per slice — running it mid-build burns tokens on UI that is still in flux.
-5. **Stop-and-commit between steps.** Each executed step ends with a commit, a review cluster verdict, and a handoff written by a non-coder subagent. Then the session stops.
-6. **The handoff is the handoff.** The next step's coder reads only the previous step's `handoff.md`, not the previous step's full spec or code.
-7. **Differentiated reads per role.** A researcher does not read `best-practices.md`. A coder does not read raw domain research. See [read-access matrix](#read-access-matrix).
-8. **Evals are per step, written before code.** Each step-spec carries pass/fail criteria. The reviewer cluster checks against them.
-9. **Reviewer cluster is separate from executors.** Code review, browser verification, and security review are subagents with their own fresh context.
+2. **Research means deep reading, not skimming.** Papers are read in full and summarized in detail. Competitor tools are used first-hand via the browser, not just read about. Unfamiliar concepts are followed up on with additional research. Every source is examined for architectural implications — problem taxonomies, complexity classes, required processing stages — that would constrain the software's structure.
+3. **Human in the loop at every gate.** The agent pauses and asks the human when blocked on access, unsure about concepts, or when research is branching. Extended back-and-forth is expected — the human's domain knowledge and judgment are load-bearing inputs, not rubber stamps.
+4. **Fresh context per stage.** Every stage runs in a new subagent with narrow tool access and a specified read-list. No stage reads the whole prior history — it reads named artifacts.
+5. **Plan one phase ahead, not the whole tree.** Vertical slices are planned coarse; the next slice's task breakdown is generated *after* the previous slice lands and its handoff is written.
+6. **Vertical slices, not backend-first.** Every slice ships a thin end-to-end piece of user-visible behavior, verified per-slice by automated tests. Chromium browser verification runs once at end-of-feature, not per slice — running it mid-build burns tokens on UI that is still in flux.
+7. **Stop-and-commit between steps.** Each executed step ends with a commit, a review cluster verdict, and a handoff written by a non-coder subagent. Then the session stops.
+8. **The handoff is the handoff.** The next step's coder reads only the previous step's `handoff.md`, not the previous step's full spec or code.
+9. **Differentiated reads per role.** A researcher does not read `best-practices.md`. A coder does not read raw domain research. See [read-access matrix](#read-access-matrix).
+10. **Evals are per step, written before code.** Each step-spec carries pass/fail criteria. The reviewer cluster checks against them.
+11. **Reviewer cluster is separate from executors.** Code review, browser verification, and security review are subagents with their own fresh context.
 
 ## How to use
 
