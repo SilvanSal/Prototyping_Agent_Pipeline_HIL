@@ -112,8 +112,10 @@ Compliance engines. Medical device controllers. Financial modeling tools. Scient
 
 ```
 Jacquard/
+├── README.md                     # this file
 ├── 00-START-HERE.md              # orchestrator entrypoint
 ├── input/                        # drop your materials here (PDFs, briefs, wireframes, specs)
+│   └── README.md
 ├── pipeline/                     # ordered stage instructions
 │   ├── 00-constitution.md
 │   ├── 00.5-intake-reader.md
@@ -130,10 +132,44 @@ Jacquard/
 │   ├── 10-pipeline-critique.md
 │   └── 11-iteration-loop.md
 ├── templates/                    # skeleton artifacts filled in by each stage
-├── agents/                       # 12 subagent definitions, copied to .claude/agents/ at bootstrap
-├── bootstrap/                    # scaffolding generator + update scripts
+│   ├── constitution.md
+│   ├── intake-brief.md
+│   ├── intake-qa.md
+│   ├── research-finding.md       # rich schema for each research insight (YAML frontmatter + source chain)
+│   ├── research-findings-index.md # auto-maintained index with filter tables + dependency graph
+│   ├── requirements.md
+│   ├── design.md
+│   ├── eval-spec.md
+│   ├── slice-plan.md
+│   ├── step-spec.md
+│   ├── knowledge.md
+│   ├── handoff.md
+│   ├── error-registry.md         # project-scoped bug memory, empty-seeded at stage 01, grown by Coder
+│   ├── hallucination-traps.md    # project-scoped wrong/right-pattern lookup, optionally seeded at stage 01
+│   └── pipeline-critique.md      # post-feature critique skeleton for stage 10
+├── claude-md-template/           # target-project conventions (CLAUDE.md triad)
+│   ├── CLAUDE.md
+│   ├── tech-stack.md
+│   ├── code-style.md
+│   └── best-practices.md
+├── agents/                       # pre-authored subagent definitions — copied into .claude/agents/ at bootstrap
+│   ├── intake-reader.md
+│   ├── domain-researcher.md
+│   ├── codebase-explorer.md
+│   ├── architect.md
+│   ├── slice-planner.md
+│   ├── step-researcher.md
+│   ├── coder.md
+│   ├── code-reviewer.md
+│   ├── security-reviewer.md
+│   ├── browser-verifier.md
+│   ├── handoff-writer.md
+│   └── pipeline-critic.md
+├── PIPELINE_IMPROVEMENT_CRITIQUE/  # post-feature critiques — stage 10 output, one per feature
+│   └── README.md
 ├── docs/decisions/               # architecture decision records for the pipeline itself
-└── PIPELINE_IMPROVEMENT_CRITIQUE/  # post-feature critique output (one per feature)
+└── bootstrap/
+    └── generate-claude-scaffolding.md   # meta-step: copies agents/ into .claude/ and substitutes tokens
 ```
 
 ---
