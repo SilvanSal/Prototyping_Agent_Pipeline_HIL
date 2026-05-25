@@ -1,2 +1,5 @@
 # Claude Code local settings and session data
 .claude/
+
+# Private strategy docs (not part of the pipeline)
+docs/
