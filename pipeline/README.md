@@ -1,6 +1,6 @@
 # Pipeline — Flow at a Glance
 
-One-screen map of the 10 stages. For rules, read `pipeline/00-constitution.md` and the root [README.md](../README.md). For orchestrator behavior, read [00-START-HERE.md](../00-START-HERE.md).
+One-screen map of the 11 stages. For rules, read `pipeline/00-constitution.md` and the root [README.md](../README.md). For orchestrator behavior, read [00-START-HERE.md](../00-START-HERE.md).
 
 ## Stage DAG
 
@@ -12,7 +12,12 @@ One-screen map of the 10 stages. For rules, read `pipeline/00-constitution.md` a
   00  constitution            (orchestrator)        → specs/constitution.md
                                       │
                                       ▼
+  00.5 intake-reader          (Intake-Reader)       → specs/intake-brief.md
+                                                      + specs/intake-qa.md        ◄── USER GATE (Q&A)
+                                      │
+                                      ▼
   01  research-domain         (Domain-Researcher)   → specs/research/domain.md
+                                                      + input/research-findings/*.md
                                                       + specs/error-registry.md           (empty seed)
                                                       + specs/research/hallucination-traps.md (optional seed)
                                       │
@@ -68,6 +73,8 @@ One-screen map of the 10 stages. For rules, read `pipeline/00-constitution.md` a
 
 | Where | Who blocks | What unblocks |
 |---|---|---|
+| Before stage 00 | Welcome (new project only) | User says "Ready" |
+| After stage 00.5 | Intake-Reader Q&A (5–10 questions) | User answers all questions |
 | After stage 03 | User ("A/B/C/D" clarify answers) | User types "Go" |
 | After stage 05 | User reviews slice-plan | User approves |
 | Before stage 06 (N ≥ 2) | drift check halts if repo moved outside last slice's file list | User picks absorb / ignore / revert |
@@ -78,8 +85,16 @@ One-screen map of the 10 stages. For rules, read `pipeline/00-constitution.md` a
 ## Artifacts by location
 
 ```
+input/
+├── README.md                          ← created at welcome
+├── [user-supplied materials]
+└── research-findings/
+    └── YYYY-MM-DD-[slug].md           ← stage 01
+
 specs/
 ├── constitution.md                    ← stage 00
+├── intake-brief.md                    ← stage 00.5
+├── intake-qa.md                       ← stage 00.5 (+ user answers)
 ├── error-registry.md                  ← seeded 01, appended at 07
 ├── research/
 │   ├── domain.md                      ← stage 01

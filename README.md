@@ -30,9 +30,11 @@ The pipeline is human-in-the-loop by design. Stages like domain research involve
 
 1. Open a fresh Claude Code session in the target project directory (empty repo or greenfield).
 2. Paste or `@`-reference `00-START-HERE.md` from this pipeline directory.
-3. The pipeline runs automatically. It will pause only at human gates (clarify questions, slice plan approval). You never need to `/clear` or manually continue to the next stage — the orchestrator auto-advances.
-4. If the context window fills up, the orchestrator writes a continuation file (`specs/.pipeline-state/continue.md`). Start a fresh session and `@`-reference that file to pick up where it left off.
-5. After the feature ships, submit your Stage 10 critique as a [GitHub Issue](https://github.com/SilvanSal/Prototyping_Agent_Pipeline_HIL/issues/new?template=pipeline-critique.yml) to help improve the pipeline for everyone.
+3. The pipeline greets you and explains what to expect. If you have project materials (briefs, PDFs, wireframes, specs, research), drop them in the `input/` folder when prompted. Say "Ready" to begin.
+4. The pipeline reads your materials, asks you some targeted questions, then does deep domain research. After that, it designs and builds — pausing at human gates (clarify questions, slice plan approval) for your input.
+5. You never need to `/clear` or manually continue to the next stage — the orchestrator auto-advances.
+6. If the context window fills up, the orchestrator writes a continuation file (`specs/.pipeline-state/continue.md`). Start a fresh session and `@`-reference that file to pick up where it left off.
+7. After the feature ships, submit your Stage 10 critique as a [GitHub Issue](https://github.com/SilvanSal/Prototyping_Agent_Pipeline_HIL/issues/new?template=pipeline-critique.yml) to help improve the pipeline for everyone.
 
 ## Directory layout
 
@@ -40,8 +42,11 @@ The pipeline is human-in-the-loop by design. Stages like domain research involve
 Jacquard/
 ├── README.md                     # this file
 ├── 00-START-HERE.md              # entrypoint the orchestrator reads first
+├── input/                        # user-supplied project materials (briefs, PDFs, wireframes, specs)
+│   └── README.md
 ├── pipeline/                     # ordered stage instructions
 │   ├── 00-constitution.md
+│   ├── 00.5-intake-reader.md
 │   ├── 01-research-domain.md
 │   ├── 02-research-codebase.md
 │   ├── 03-clarify.md
@@ -54,6 +59,8 @@ Jacquard/
 │   └── 10-pipeline-critique.md
 ├── templates/                    # skeleton artifacts the stages fill in
 │   ├── constitution.md
+│   ├── intake-brief.md
+│   ├── intake-qa.md
 │   ├── requirements.md
 │   ├── design.md
 │   ├── eval-spec.md
@@ -70,6 +77,7 @@ Jacquard/
 │   ├── code-style.md
 │   └── best-practices.md
 ├── skills/                       # pre-authored SKILL.md per stage — copied into .claude/skills/ at bootstrap
+│   ├── intake-reader/SKILL.md
 │   ├── research-domain/SKILL.md
 │   ├── research-codebase/SKILL.md
 │   ├── clarify/SKILL.md
@@ -80,6 +88,7 @@ Jacquard/
 │   ├── review/SKILL.md
 │   └── write-handoff/SKILL.md
 ├── agents/                       # pre-authored subagent definitions — copied into .claude/agents/ at bootstrap
+│   ├── intake-reader.md
 │   ├── domain-researcher.md
 │   ├── codebase-explorer.md
 │   ├── architect.md
@@ -103,6 +112,7 @@ Each subagent reads only what its job requires. The orchestrator enforces this i
 
 | Agent | constitution | domain-research | tech-stack | code-style | best-practices | step-spec | knowledge | prev-handoff | diff | eval-spec | repo | error-registry | hallucination-traps |
 |---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Intake-Reader | v | — | — | — | — | — | — | — | — | — | input/ (R) | — | — |
 | Domain-Researcher | v | — | — | — | — | — | — | — | — | — | — | writes (empty seed) | writes (optional seed) |
 | Codebase-Explorer | v | — | — | — | — | — | — | — | — | — | v (read-only) | — | — |
 | Architect | v | v | v | — | — | — | — | — | — | — | — | — | — |

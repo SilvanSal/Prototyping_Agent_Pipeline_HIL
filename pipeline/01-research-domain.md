@@ -1,14 +1,56 @@
 # Stage 01 — Domain Research
 
 **Run by:** `Domain-Researcher` subagent (fresh context, read-only tools + WebSearch/WebFetch + browser tools)
-**Reads:** user brief, `specs/constitution.md`
-**Produces:** `specs/research/domain.md` · optionally seeds `specs/research/hallucination-traps.md` and creates an empty `specs/error-registry.md`
+**Reads:** `specs/intake-brief.md`, `specs/intake-qa.md`, `specs/constitution.md`
+**Produces:** `specs/research/domain.md` · dated insight files in `input/research-findings/` · optionally seeds `specs/research/hallucination-traps.md` and creates an empty `specs/error-registry.md`
 
 ## Purpose
 
 Understand the domain the app lives in *deeply* before designing. This is NOT tech-stack research. It is: what do real users in this space do today? What prior art exists (open-source, commercial, academic)? What are the known failure modes, UX conventions, and regulatory quirks? **What does the research literature reveal about problem structure, complexity classes, or algorithmic approaches that would constrain or shape the software architecture?**
 
 This stage is intentionally thorough. The Domain-Researcher should spend significant time reading, following references, and building genuine understanding. A shallow skim that produces bullet points is a failure. The output should demonstrate that the researcher *understood* the material, not just found it.
+
+Research is now **grounded in intake artifacts**. Read `specs/intake-brief.md` and `specs/intake-qa.md` first. Derive the research agenda from those files — do not do a generic domain scan.
+
+## Research agenda (derived from intake artifacts)
+
+Before forming any research queries, read `specs/intake-brief.md` and `specs/intake-qa.md`. Derive research targets from:
+
+1. **Papers and products referenced** in `intake-brief.md` § "Referenced prior art" — fetch abstracts or full text where available
+2. **Competitors or products named** in the intake materials — research their known tradeoffs and failure modes
+3. **Technologies referenced** in the intake materials — look for migration guides, version pitfalls, known failure modes
+4. **Conflicts identified** in `intake-brief.md` § "Identified conflicts" — research which side is correct or more current
+5. **Unstated assumptions** in `intake-brief.md` § "Unstated assumptions" — research whether they hold in the target domain
+6. **Architecturally consequential Q&A answers** in `intake-qa.md` — research the implications of the user's selected options
+
+If `specs/intake-brief.md` does not exist (pipeline running without Stage 00.5), proceed with the user brief directly.
+
+## Saving discovered insights
+
+All newly discovered insights must be saved as **dated markdown files** in `input/research-findings/`:
+
+```
+input/research-findings/YYYY-MM-DD-[slug].md
+```
+
+Example: `input/research-findings/2026-04-30-competitor-stripe-analysis.md`
+
+This is in addition to `specs/research/domain.md`. The `input/research-findings/` folder accumulates insights across the whole process, making them available to the Architect (Stage 04) directly from the `input/` tree.
+
+Format for each research-findings file:
+```markdown
+# Research Finding: [Topic]
+_Date: YYYY-MM-DD · Stage: 01 Domain Research_
+
+## Summary
+[2–3 sentences]
+
+## Details
+[Sourced findings — every claim has a URL]
+
+## Architectural implications
+[What this means for the software's structure, if anything]
+```
 
 ## Interaction model
 
@@ -212,25 +254,26 @@ The operator relays this to the expert. The expert either approves or provides c
 
 ## Orchestrator dispatch prompt — inline mode (copy verbatim)
 
-> You are the Domain-Researcher subagent. You have a fresh context window. Read ONLY these files: `specs/constitution.md`, and the user's original brief (attached below).
+> You are the Domain-Researcher subagent. You have a fresh context window. Read ONLY these files: `specs/intake-brief.md`, `specs/intake-qa.md`, `specs/constitution.md`.
 >
-> Your job: produce `specs/research/domain.md` following the structure in `pipeline/01-research-domain.md`. Read that pipeline file carefully — it contains detailed protocols for deep paper reading, active tool usage, architectural implication extraction, and human interaction.
+> Your job: produce `specs/research/domain.md` following the structure in `pipeline/01-research-domain.md`. Read that pipeline file carefully — it contains detailed protocols for deep paper reading, active tool usage, architectural implication extraction, and human interaction. **Start with the "Research agenda" section** — derive your research targets from the intake artifacts, not from a generic domain scan.
 >
 > **Key expectations:**
 > - You MUST actually use browser tools to click through freely-accessible competitor products. If a product requires paid access, ask the human.
 > - You MUST read papers thoroughly (full text, not just abstracts), summarize them in detail, and follow up on concepts you don't understand with additional research.
 > - You MUST extract architectural implications from every source — findings that constrain or shape the software's structure (problem taxonomies, complexity classes, required processing stages, data model constraints, etc.).
 > - You SHOULD engage the human in extended back-and-forth when you need access, clarification, or prioritization guidance. This is not a one-shot task.
+> - You MUST save discovered insights as dated files in `input/research-findings/` per the format in `pipeline/01-research-domain.md`.
 >
 > You may use WebSearch, WebFetch, and browser tools. You may NOT propose an architecture, pick a tech stack, or write code.
 >
 > While researching, if you encounter 1–5 well-documented wrong-pattern/right-pattern pairs for this domain (each with a source URL), seed `specs/research/hallucination-traps.md` from `templates/hallucination-traps.md` with one row per confirmed pair. Do not invent traps. Regardless of whether traps are found, also create `specs/error-registry.md` from `templates/error-registry.md` as an empty registry for the Coder to grow later.
 >
-> When you are done, output the file paths (including the two optional seeds) and a 5-bullet summary of the key findings, plus a separate summary of architectural implications discovered. Stop.
+> When you are done, output the file paths (including the two optional seeds and all research-findings files) and a 5-bullet summary of the key findings, plus a separate summary of architectural implications discovered. Stop.
 
 ## Orchestrator dispatch prompt — domain-expert-async mode (copy verbatim)
 
-> You are the Domain-Researcher subagent. You have a fresh context window. Read: `specs/constitution.md` (note the Human Profile section — this project has an async domain expert), and the user's original brief (attached below).
+> You are the Domain-Researcher subagent. You have a fresh context window. Read: `specs/intake-brief.md`, `specs/intake-qa.md`, `specs/constitution.md` (note the Human Profile section — this project has an async domain expert).
 >
 > Your job: produce `specs/research/domain.md` following the structure in `pipeline/01-research-domain.md`. Read that pipeline file's "Domain-expert-async mode" section carefully.
 >
@@ -257,6 +300,6 @@ The operator relays this to the expert. The expert either approves or provides c
 
 ## Stop condition
 
-**Inline mode:** File `specs/research/domain.md` exists, has all 8 sections filled or explicitly marked "none identified" with reasoning, every factual claim has a source URL, and the timestamp is at the top. Section 4 (academic prior art) contains detailed multi-paragraph summaries for each significant paper — not just one-line distillations. Section 7 (architectural implications) is present and non-empty for any domain with research literature. `specs/error-registry.md` exists (empty or with the delete-me example). `specs/research/hallucination-traps.md` exists if 1–5 documented traps were found; otherwise is skipped with a one-line reason in the Domain-Researcher's output.
+**Inline mode:** File `specs/research/domain.md` exists, has all 8 sections filled or explicitly marked "none identified" with reasoning, every factual claim has a source URL, and the timestamp is at the top. Section 4 (academic prior art) contains detailed multi-paragraph summaries for each significant paper — not just one-line distillations. Section 7 (architectural implications) is present and non-empty for any domain with research literature. `specs/error-registry.md` exists (empty or with the delete-me example). `specs/research/hallucination-traps.md` exists if 1–5 documented traps were found; otherwise is skipped with a one-line reason in the Domain-Researcher's output. Discovered insights are saved as dated files in `input/research-findings/`.
 
 **Async mode:** All of the above, plus: at least one `expert-questionnaire-R[N].md` and corresponding `expert-answers-R[N].md` exist. `specs/research/expert-summary.md` exists and has been approved by the domain expert (operator confirms approval). No `_PENDING EXPERT INPUT_` markers remain in `domain.md`.

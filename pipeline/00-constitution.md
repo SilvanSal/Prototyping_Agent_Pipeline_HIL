@@ -57,3 +57,11 @@ The Architect and Slice-Planner do not get to trade these off. The constitution 
 ## Stop condition
 
 File `specs/constitution.md` exists in the target repo, committed, and contains at minimum: project identity, non-negotiables, and non-goals. Tech-stack-locks and compliance may be deferred.
+
+## After this stage
+
+The orchestrator transitions to Stage 00.5 (Intake Reader). Before dispatching, tell the user in plain language:
+
+> "Great — your project foundation is set. Next, I'll read any materials you've placed in the `input/` folder and ask you some targeted questions to make sure I understand what you need. If you haven't added anything to `input/` yet, now is a good time. Say **'Ready'** when you want to continue."
+
+Create `input/` with `input/README.md` if it doesn't exist. Wait for "Ready" before dispatching the Intake-Reader.

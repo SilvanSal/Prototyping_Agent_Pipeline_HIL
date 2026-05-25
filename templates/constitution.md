@@ -1,6 +1,7 @@
 # Constitution: [Project Name]
 
 _Created: [YYYY-MM-DD] · Last updated: [YYYY-MM-DD]_
+_Active feature slug: [feature-slug — updated each time a new feature begins; used as `[feature]` token across all pipeline stages]_
 
 ## Project identity
 
