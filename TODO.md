@@ -100,8 +100,6 @@ but are not stated in the input materials.
 - No write access to application code, tech-stack, or any spec under `specs/[feature]/`
 - Model: sonnet (this is mostly reading and synthesis, not deep reasoning)
 
-**Create `skills/intake-reader/SKILL.md`** following the existing skill pattern.
-
 **Update `00-START-HERE.md`**:
 - Add Stage 00.5 to the stage sequence table
 - Dispatch intake-reader with read list: `input/**`, `specs/constitution.md`
@@ -115,7 +113,6 @@ but are not stated in the input materials.
 **Files to create**
 - `pipeline/00.5-intake-reader.md`
 - `agents/intake-reader.md`
-- `skills/intake-reader/SKILL.md`
 
 **Files to modify**
 - `00-START-HERE.md` — add stage 00.5 to sequence, gate, dispatch instructions
@@ -266,8 +263,6 @@ milestones (MVP, v1.0, v1.1, v2.0 etc.); slices are implementation chunks within
 - Write access: `specs/[feature]/phase-plan.md`
 - No write access to slice-plan, requirements, design, or application code
 
-**Create `skills/phase-planning/SKILL.md`** following existing skill pattern.
-
 **Create `templates/phase-plan.md`** with the template structure:
 - Header: feature name, date, phase-planner agent version
 - Phase table: columns = ID, Name, User outcome, Requirements satisfied, Acceptance criteria,
@@ -296,7 +291,6 @@ milestones (MVP, v1.0, v1.1, v2.0 etc.); slices are implementation chunks within
 **Files to create**
 - `pipeline/04.5-phase-planning.md`
 - `agents/phase-planner.md`
-- `skills/phase-planning/SKILL.md`
 - `templates/phase-plan.md`
 
 **Files to modify**
@@ -383,10 +377,6 @@ Replace the current dispatch instruction with explicit fork-join steps:
 - Both agents must write their individual outputs to separate files first:
   `specs/[feature]/slices/[N]/review-code.md` and `specs/[feature]/slices/[N]/review-security.md`
 - The orchestrator aggregates these into the single `review.md` after both complete
-
-**Update `skills/review/SKILL.md`**:
-- Document the fork-join pattern explicitly
-- Add the stop condition: aggregate verdict "block" halts the pipeline
 
 **Done when**
 - Code-Reviewer and Security-Reviewer are dispatched with `run_in_background: true` in sequence
@@ -515,7 +505,7 @@ For each library this slice touches:
 
 **Problem**
 
-Bootstrap copies skills and agents into target projects once. When this pipeline repo
+Bootstrap copies agents into target projects once. When this pipeline repo
 improves — new agents, better instructions, bug fixes — there is no mechanism to propagate
 those improvements to existing target projects. Every project is a frozen snapshot fork.
 
@@ -576,7 +566,7 @@ shows pipeline-version A.B.C (where A.B.C < X.Y.Z):
 **Files to modify**
 - `bootstrap/generate-claude-scaffolding.md` — add `pipeline-version` to generated `settings.json`
 - `00-START-HERE.md` — add version-check at new-feature start
-- All files in `agents/` and `skills/` — add pipeline-owned comment header
+- All files in `agents/` — add pipeline-owned comment header
 
 **Done when**
 - Generated `settings.json` contains `pipeline-version`
@@ -692,14 +682,6 @@ not know which slice to pick up from, which phase they're in, or whether the las
   ```
 - `session-log.md` is a running log of every pipeline session for this feature.
 
-**Create `skills/resume/SKILL.md`** — a `/resume` skill for the orchestrator:
-- User invokes `/resume` at the start of a session when picking up a paused pipeline.
-- Skill reads: `specs/[feature]/session-log.md`, `specs/[feature]/slice-plan.md`,
-  `specs/[feature]/phase-plan.md`, the most recent `slices/[N]/handoff.md`
-- Outputs a one-paragraph re-entry briefing: current phase, next slice, last review verdict,
-  open blockers from handoff, and the next orchestrator action
-- Does not modify any files; read-only
-
 **Update `00-START-HERE.md`**:
 - Add a "Session start" pre-flight checklist:
   1. Is `specs/[feature]/session-log.md` present? If yes, read the last entry to determine status.
@@ -709,7 +691,6 @@ not know which slice to pick up from, which phase they're in, or whether the las
      before proceeding.
 
 **Files to create**
-- `skills/resume/SKILL.md`
 - `templates/session-log.md` (one-line-per-entry format, header only)
 
 **Files to modify**
@@ -1265,7 +1246,7 @@ A single typo in a file path makes a stage silently read nothing or write to the
 **Method:**
 
 1. Extract every file path string from every `.md` file in the repo (grep for `specs/`,
-   `input/`, `.claude/`, `agents/`, `skills/`, `templates/`).
+   `input/`, `.claude/`, `agents/`, `templates/`).
 2. For each path, determine one of:
    - **Pipeline repo static** — exists in this repo right now (check with `ls`)
    - **Generated at bootstrap** — produced by `bootstrap/generate-claude-scaffolding.md`
@@ -1320,9 +1301,6 @@ pipeline/00.5-intake-reader.md
 pipeline/04.5-phase-planning.md
 agents/intake-reader.md
 agents/phase-planner.md
-skills/intake-reader/SKILL.md
-skills/phase-planning/SKILL.md
-skills/resume/SKILL.md
 templates/phase-plan.md
 templates/test-run.md
 templates/session-log.md
@@ -1384,5 +1362,4 @@ bootstrap/hooks/no-bypass-hooks.sh      ← add --no-hooks to regex
 bootstrap/hooks/restrict-reads.sh       ← document fallback when current-stage absent
 bootstrap/hooks/stop-after-handoff.sh   ← verify/fix trigger type (PostToolUse Write, not Stop)
 All agents/*.md                     ← pipeline-owned comment header
-All skills/*/SKILL.md               ← pipeline-owned comment header
 ```

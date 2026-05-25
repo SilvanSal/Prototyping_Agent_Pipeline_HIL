@@ -2,7 +2,7 @@
 
 > This is the top-level pointer every Claude Code session reads first. It is deliberately short. It points to the three files that carry the project's conventions: `tech-stack.md`, `code-style.md`, `best-practices.md`.
 >
-> This project was bootstrapped from the Agentic Coding Pipeline. The pipeline's rules (research before code, vertical slices, fresh context per step, handoff-not-transcript) are enforced by `.claude/` hooks and skills.
+> This project was bootstrapped from the Agentic Coding Pipeline. The pipeline's rules (research before code, vertical slices, fresh context per step, handoff-not-transcript) are enforced by `.claude/` hooks and agents.
 
 ## For every session, before writing code
 
@@ -12,7 +12,7 @@ Read, in this order:
 3. `code-style.md` — how to write.
 4. `best-practices.md` — how "done" is defined.
 
-Then read the current slice's step-spec, knowledge.md, and previous slice's handoff.md as directed by `.claude/skills/` or the orchestrator prompt.
+Then read the current slice's step-spec, knowledge.md, and previous slice's handoff.md as directed by the orchestrator prompt.
 
 ## Read-access matrix (enforced)
 

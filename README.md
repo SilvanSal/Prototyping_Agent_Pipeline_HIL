@@ -64,17 +64,6 @@ Jacquard/
 │   ├── tech-stack.md
 │   ├── code-style.md
 │   └── best-practices.md
-├── skills/                       # pre-authored SKILL.md per stage — copied into .claude/skills/ at bootstrap
-│   ├── intake-reader/SKILL.md
-│   ├── research-domain/SKILL.md
-│   ├── research-codebase/SKILL.md
-│   ├── clarify/SKILL.md
-│   ├── requirements-design/SKILL.md
-│   ├── plan-slices/SKILL.md
-│   ├── research-step/SKILL.md
-│   ├── execute-step/SKILL.md
-│   ├── review/SKILL.md
-│   └── write-handoff/SKILL.md
 ├── agents/                       # pre-authored subagent definitions — copied into .claude/agents/ at bootstrap
 │   ├── intake-reader.md
 │   ├── domain-researcher.md
@@ -91,7 +80,7 @@ Jacquard/
 ├── PIPELINE_IMPROVEMENT_CRITIQUE/  # post-feature critiques — stage 10 output, one per feature
 │   └── README.md
 └── bootstrap/
-    └── generate-claude-scaffolding.md   # meta-step: copies skills/ + agents/ into .claude/ and substitutes tokens
+    └── generate-claude-scaffolding.md   # meta-step: copies agents/ into .claude/ and substitutes tokens
 ```
 
 ---

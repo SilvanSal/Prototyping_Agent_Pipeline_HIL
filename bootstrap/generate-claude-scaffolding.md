@@ -2,11 +2,11 @@
 
 **Run by:** Orchestrator, ONCE per target project, after stage 02 (Codebase Discovery) has produced the triad.
 **Reads:** `claude-md-template/`, `pipeline/*.md`, `templates/*.md`, the target project's existing state.
-**Produces:** a `.claude/` directory in the target project root with skills, subagents, settings, and hook scripts.
+**Produces:** a `.claude/` directory in the target project root with subagents, settings, and hook scripts.
 
 ## Purpose
 
-Turn the playbook (these files) into *target-project-native* Claude Code scaffolding, so subsequent sessions in the target project don't need to re-read this pipeline directory. Each stage becomes a skill. Each subagent role becomes an `.claude/agents/` entry. Each gate becomes a hook.
+Turn the playbook (these files) into *target-project-native* Claude Code scaffolding, so subsequent sessions in the target project don't need to re-read this pipeline directory. Each subagent role becomes an `.claude/agents/` entry. Each gate becomes a hook.
 
 ## What to produce in the target project
 
@@ -20,16 +20,6 @@ Turn the playbook (these files) into *target-project-native* Claude Code scaffol
 │   └── ...
 └── .claude/
     ├── settings.json                # permissions + hooks
-    ├── skills/
-    │   ├── research-domain/SKILL.md
-    │   ├── research-codebase/SKILL.md
-    │   ├── clarify/SKILL.md
-    │   ├── requirements-design/SKILL.md
-    │   ├── plan-slices/SKILL.md
-    │   ├── research-step/SKILL.md
-    │   ├── execute-step/SKILL.md
-    │   ├── review/SKILL.md
-    │   └── write-handoff/SKILL.md
     ├── agents/
     │   ├── domain-researcher.md
     │   ├── codebase-explorer.md
@@ -51,22 +41,9 @@ Turn the playbook (these files) into *target-project-native* Claude Code scaffol
         └── current-stage            # single-line marker: orchestrator writes this before each subagent dispatch
 ```
 
-## Skills and agents are pre-authored — copy, don't distill
+## Agents are pre-authored — copy, don't distill
 
-Stage skills live at `skills/[name]/SKILL.md` in the pipeline directory. Subagent definitions live at `agents/[name].md`. **Copy them into `.claude/skills/` and `.claude/agents/` in the target project.** Do NOT re-derive them from `pipeline/*.md` — the pre-authored versions are the source of truth and are designed to stay consistent across projects.
-
-### Skills to copy (9)
-```
-skills/research-domain/SKILL.md
-skills/research-codebase/SKILL.md
-skills/clarify/SKILL.md
-skills/requirements-design/SKILL.md
-skills/plan-slices/SKILL.md
-skills/research-step/SKILL.md
-skills/execute-step/SKILL.md
-skills/review/SKILL.md
-skills/write-handoff/SKILL.md
-```
+Subagent definitions live at `agents/[name].md`. **Copy them into `.claude/agents/` in the target project.** Do NOT re-derive them from `pipeline/*.md` — the pre-authored versions are the source of truth and are designed to stay consistent across projects.
 
 ### Agents to copy (10)
 ```
@@ -87,8 +64,7 @@ The pre-authored files are almost project-agnostic. Only these tokens vary and m
 
 | Token | Substitute with | Source |
 |---|---|---|
-| `[feature]` / `[N]` / `[ID]` / `[SHAs]` / `[URL]` | runtime values | left as literal in the skill; the orchestrator fills them at dispatch time |
-| `allowed-tools: ... Bash` in `execute-step/SKILL.md` | explicit test/build Bash allowlist | `tech-stack.md` |
+| `[feature]` / `[N]` / `[ID]` / `[SHAs]` / `[URL]` | runtime values | left as literal in the agent; the orchestrator fills them at dispatch time |
 | `tools: ... Bash` in `coder.md` / `code-reviewer.md` / `security-reviewer.md` / `handoff-writer.md` | scoped Bash allowlist | `tech-stack.md` |
 
 **Do not narrow tool lists beyond the pinned tech-stack.** If `tech-stack.md` pins `pytest`, add `Bash(pytest*)`; if it doesn't, omit.
@@ -204,7 +180,7 @@ jq -n '{
   hookSpecificOutput: {
     hookEventName: "PreToolUse",
     permissionDecision: "deny",
-    permissionDecisionReason: "No active step-spec.md found. Run the plan-slices + research-step skills before writing application code."
+    permissionDecisionReason: "No active step-spec.md found. Run plan-slices + research-step stages before writing application code."
   }
 }'
 ```
@@ -366,7 +342,7 @@ fi
 ## Rules for this bootstrap step
 
 - **Run once per project.** If `.claude/` already exists in the target, do not overwrite. Instead, diff the existing files against the expected structure and surface mismatches to the user.
-- **Copy pre-authored skills and agents verbatim.** Do not distill or re-derive them from `pipeline/*.md`. The pre-authored versions in `skills/` and `agents/` are the source of truth.
+- **Copy pre-authored agents verbatim.** Do not distill or re-derive them from `pipeline/*.md`. The pre-authored versions in `agents/` are the source of truth.
 - **Substitute only the documented tokens.** Bash allowlists from `tech-stack.md`; runtime tokens like `[feature]` / `[N]` stay literal (orchestrator fills them at dispatch).
 - **Pin the tool allowlist to this project's actual tech stack.** Read `tech-stack.md` to decide which `Bash(xxx*)` entries to include.
 - **Do not write into `specs/`.** Specs are the output of stages 03+, not of bootstrap.
@@ -377,16 +353,15 @@ fi
 > You are the Bootstrap subagent. Read `tech-stack.md` from the target project root (it must exist — if not, stop and report that stage 02 is incomplete).
 >
 > Your job:
-> 1. Copy every file under the pipeline's `skills/` to `.claude/skills/` in the target project, preserving directory structure.
-> 2. Copy every file under the pipeline's `agents/` to `.claude/agents/` in the target project.
-> 3. Substitute per-project tokens per the "Per-project substitutions" table in `bootstrap/generate-claude-scaffolding.md` (only Bash allowlists vary — everything else stays verbatim).
-> 4. Write `.claude/settings.json` and `.claude/hooks/*.sh` per the templates in this file. Create an empty `.claude/.state/` directory (markers are created on demand by the orchestrator, not at bootstrap).
-> 5. Pin Bash allowlist entries in `settings.json` to match `tech-stack.md`. Delete unused entries — do not leave placeholders. Make all hook scripts executable (`chmod +x`).
+> 1. Copy every file under the pipeline's `agents/` to `.claude/agents/` in the target project.
+> 2. Substitute per-project tokens per the "Per-project substitutions" table in `bootstrap/generate-claude-scaffolding.md` (only Bash allowlists vary — everything else stays verbatim).
+> 3. Write `.claude/settings.json` and `.claude/hooks/*.sh` per the templates in this file. Create an empty `.claude/.state/` directory (markers are created on demand by the orchestrator, not at bootstrap).
+> 4. Pin Bash allowlist entries in `settings.json` to match `tech-stack.md`. Delete unused entries — do not leave placeholders. Make all hook scripts executable (`chmod +x`).
 >
-> Do NOT re-derive skills or agents from `pipeline/*.md`. The `skills/` and `agents/` directories are the source of truth.
+> Do NOT re-derive agents from `pipeline/*.md`. The `agents/` directory is the source of truth.
 >
 > When done, output the file tree under `.claude/` and a note that the user should start a fresh session so the new `.claude/` hooks and settings take effect before stage 03. Stop.
 
 ## Stop condition
 
-`.claude/` exists in the target project with settings.json, all 9 skill files, all 10 agent files, **5 hook scripts (executable)**, a `.state/` directory, and a final message to the user to start a fresh session so the bootstrapped `.claude/` is active for stage 03.
+`.claude/` exists in the target project with settings.json, all 10 agent files, **5 hook scripts (executable)**, a `.state/` directory, and a final message to the user to start a fresh session so the bootstrapped `.claude/` is active for stage 03.

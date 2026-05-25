@@ -1,5 +1,5 @@
 <!-- pipeline-owned: do not edit in target project; use update-pipeline.md to upgrade -->
-<!-- read-list: [specs/[feature]/slice-plan.md, specs/[feature]/eval-spec.md, specs/[feature]/session-log.md, specs/[feature]/slices/*/review.md, specs/[feature]/slices/*/handoff.md, specs/error-registry.md, PIPELINE_IMPROVEMENT_CRITIQUE/*.md (prior critiques, trend only)] write-list: [PIPELINE_IMPROVEMENT_CRITIQUE/[feature]-[YYYY-MM-DD].md] — must match skills/pipeline-critique/SKILL.md -->
+<!-- read-list: [specs/[feature]/slice-plan.md, specs/[feature]/eval-spec.md, specs/[feature]/session-log.md, specs/[feature]/slices/*/review.md, specs/[feature]/slices/*/handoff.md, specs/error-registry.md, PIPELINE_IMPROVEMENT_CRITIQUE/*.md (prior critiques, trend only)] write-list: [PIPELINE_IMPROVEMENT_CRITIQUE/[feature]-[YYYY-MM-DD].md] — must match pipeline/10-pipeline-critique.md -->
 
 ---
 name: pipeline-critic
