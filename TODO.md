@@ -677,10 +677,10 @@ the orchestrator has no memory of prior sessions.
 
 **Problem**
 
-The pipeline stops between slices and relies on the user to start a new session correctly.
-There is no machine-readable record of where the pipeline is in a multi-slice, multi-phase
-feature. A user returning after a few days may not know which slice to pick up from,
-which phase they're in, or whether the last review passed.
+The orchestrator auto-advances between slices, but if context overflow forces a manual
+session restart, there is no machine-readable record of where the pipeline is in a
+multi-slice, multi-phase feature. A user returning after a context-overflow restart may
+not know which slice to pick up from, which phase they're in, or whether the last review passed.
 
 **What to do**
 
@@ -848,10 +848,10 @@ Write an ADR for each of the following (one file per decision):
    should define WHAT to verify, not HOW. Test implementation details belong in the code
    context where the library is known.)
 
-4. `docs/decisions/004-handoff-as-session-boundary.md` — why the pipeline stops after
-   handoff and requires a new session for the next slice, rather than chaining slices in
-   one session. (Token economy, context window limits, and forcing explicit re-grounding
-   prevent accumulated context drift across slices.)
+4. `docs/decisions/004-handoff-as-session-boundary.md` — why the handoff is the
+   compression boundary between slices. The orchestrator auto-advances (no manual session
+   restart), but each slice's Coder starts with fresh context reading only the handoff —
+   not the prior slice's full history. (Prevents accumulated context drift across slices.)
 
 5. `docs/decisions/005-error-registry-and-hallucination-traps.md` — why these two files
    exist as separate artifacts rather than being merged, and why the promotion threshold

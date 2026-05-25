@@ -47,9 +47,13 @@ Use `templates/handoff.md`. Target length: 300–500 words. If it's longer, the 
 
 ## After this stage
 
-**The orchestrator stops.** A new Claude Code session is expected to pick up for the next slice, dispatched by the user. The new orchestrator's only reads to start the next slice are:
+**The orchestrator auto-advances.** If slices remain in `slice-plan.md`, the orchestrator runs the pre-slice drift check (stage 05.5) and then dispatches stage 06 for the next slice — no user action needed. If this was the final slice, the orchestrator dispatches stage 10 (Pipeline Critic).
+
+The orchestrator's reads to start the next slice are:
 - `CLAUDE.md`
-- `specs/[feature]/slices/[N]/handoff.md` (the just-written file, for the Coder)
+- `specs/[feature]/slices/[N]/handoff.md` (the just-written file, for the next Coder)
 - `specs/[feature]/slice-plan.md` (to identify slice N+1)
 
-If Slice-Planner needs to re-run (because this handoff revealed plan-level issues), the new session dispatches it first before stage 06.
+If Slice-Planner needs to re-run (because this handoff revealed plan-level issues), the orchestrator dispatches it before stage 06.
+
+The only scenario where the user must manually start a new session is **context overflow** — see `00-START-HERE.md` § "Continuation protocol".

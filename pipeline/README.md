@@ -54,7 +54,7 @@ One-screen map of the 10 stages. For rules, read `pipeline/00-constitution.md` a
   ║  09  write-handoff         (Handoff-Writer)     → slices/[N]/handoff.md        ║
   ║                                   │                                            ║
   ║                                   ▼                                            ║
-  ║                              ◆ STOP ◆  (new session picks up slice N+1)        ║
+  ║                              ◆ AUTO-ADVANCE ◆  (orchestrator continues to N+1)  ║
   ║                                                                                ║
   ╚════════════════════════════════════════════════════════════════════════════════╝
                                       │
@@ -72,7 +72,7 @@ One-screen map of the 10 stages. For rules, read `pipeline/00-constitution.md` a
 | After stage 05 | User reviews slice-plan | User approves |
 | Before stage 06 (N ≥ 2) | drift check halts if repo moved outside last slice's file list | User picks absorb / ignore / revert |
 | After stage 08 | `block` verdict from Code- or Security-Reviewer | Return to stage 07 with fixes |
-| After stage 09 | Session ends — no auto-chain | User starts new session for slice N+1 |
+| After stage 09 | — | Orchestrator auto-advances to next slice (drift check → stage 06) or stage 10 if final slice |
 | End-of-feature | Browser-Verifier runs once (not per slice) | `fail` opens a remediation slice (re-run 05–09) |
 
 ## Artifacts by location

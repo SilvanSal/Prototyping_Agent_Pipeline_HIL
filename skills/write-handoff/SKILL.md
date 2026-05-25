@@ -1,6 +1,6 @@
 ---
 name: write-handoff
-description: Use after `review` returns all-pass to write `specs/[feature]/slices/[N]/handoff.md`. Invokes the Handoff-Writer subagent — NOT the Coder that wrote the slice (avoids self-assessment bias). Grounded in diff + commits + tests + review.md, not chat narration. Session stops after this file is committed.
+description: Use after `review` returns all-pass to write `specs/[feature]/slices/[N]/handoff.md`. Invokes the Handoff-Writer subagent — NOT the Coder that wrote the slice (avoids self-assessment bias). Grounded in diff + commits + tests + review.md, not chat narration. Orchestrator auto-advances after this file is committed.
 allowed-tools: Read, Grep, Glob, Write
 ---
 
@@ -44,5 +44,5 @@ allowed-tools: Read, Grep, Glob, Write
 >
 > When done, output the file path and the list of eval-spec criteria IDs marked green vs still red. Stop.
 
-## Stop condition + session end
-`handoff.md` exists (word count 200–600), is committed, and has all 7 sections. **Then the orchestrator stops the session.** A new session picks up the next slice.
+## Stop condition
+`handoff.md` exists (word count 200–600), is committed, and has all 7 sections. **The orchestrator then auto-advances** — drift check → stage 06 for the next slice, or stage 10 if this was the final slice.

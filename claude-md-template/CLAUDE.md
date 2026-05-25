@@ -28,7 +28,7 @@ See `specs/constitution.md` and the pipeline README for the full matrix. Short v
 
 1. **Never write application code without a step-spec.** If there isn't one, stop and raise it.
 2. **Never skip the review cluster.** Every slice goes through code + security review, and browser verification if UI-visible.
-3. **Stop after each slice's handoff.md is written.** A new session handles the next slice.
+3. **The orchestrator auto-advances after each slice's handoff.md is written.** No manual session restart needed — the orchestrator continues to the next slice (or stage 10 if final). The only exception is context overflow, which triggers a continuation file.
 4. **No backwards-compat shims, no "just in case" code, no `// removed` comments, no dead flags.** Delete decisively.
 5. **Commit after every sub-task** with the message format in `best-practices.md`.
 6. **Pin versions.** Never silently upgrade a dependency past what `tech-stack.md` lists.

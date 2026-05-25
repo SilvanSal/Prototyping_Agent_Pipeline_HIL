@@ -348,9 +348,9 @@ exit 0
 
 **What this does NOT enforce:** grep-only lookups (the matrix marks `grep` on some cells). Enforcing grep-only without a file-read would require a different hook keyed on tool name `Read` and target path — which this hook is. The subtlety: the matrix says Coder grep-only on `error-registry.md` and `hallucination-traps.md`, so a cover-to-cover `Read` of those files should be blocked too. Add to the Coder deny list if that discipline slips in practice; left out of the default to avoid false positives on small files.
 
-### `.claude/hooks/stop-after-handoff.sh`
+### `.claude/hooks/handoff-committed.sh`
 
-On session Stop, reminds the orchestrator to end the session after the most recent slice's `handoff.md` was written in this session.
+After a handoff is committed, reminds the orchestrator to auto-advance to the next slice or finalize the feature.
 
 ```bash
 #!/usr/bin/env bash
@@ -358,7 +358,7 @@ On session Stop, reminds the orchestrator to end the session after the most rece
 latest_handoff=$(git log -1 --name-only --format='' 2>/dev/null | grep 'handoff\.md$' || true)
 if [[ -n "$latest_handoff" ]]; then
   jq -n --arg path "$latest_handoff" '{
-    systemMessage: ("Handoff committed: " + $path + ". End this session. Start a new session for the next slice.")
+    systemMessage: ("Handoff committed: " + $path + ". Auto-advance: run drift check then dispatch stage 06 for the next slice, or stage 10 if this was the final slice.")
   }'
 fi
 ```
@@ -370,7 +370,7 @@ fi
 - **Substitute only the documented tokens.** Bash allowlists from `tech-stack.md`; runtime tokens like `[feature]` / `[N]` stay literal (orchestrator fills them at dispatch).
 - **Pin the tool allowlist to this project's actual tech stack.** Read `tech-stack.md` to decide which `Bash(xxx*)` entries to include.
 - **Do not write into `specs/`.** Specs are the output of stages 03+, not of bootstrap.
-- **After scaffolding is generated, stop.** The orchestrator does not immediately proceed to stage 03. A new session with the bootstrapped `.claude/` is expected to run stage 03.
+- **After scaffolding is generated, stop.** The orchestrator does not immediately proceed to stage 03. The bootstrapped `.claude/` must be loaded by the current session's context before stage 03 can proceed — this is the one exception where the orchestrator pauses for the user to start a fresh session so the new `.claude/` hooks and settings take effect.
 
 ## Orchestrator dispatch prompt (this stage)
 
@@ -385,8 +385,8 @@ fi
 >
 > Do NOT re-derive skills or agents from `pipeline/*.md`. The `skills/` and `agents/` directories are the source of truth.
 >
-> When done, output the file tree under `.claude/` and a note that the user should end this session and open a new one to run stage 03. Stop.
+> When done, output the file tree under `.claude/` and a note that the user should start a fresh session so the new `.claude/` hooks and settings take effect before stage 03. Stop.
 
 ## Stop condition
 
-`.claude/` exists in the target project with settings.json, all 9 skill files, all 10 agent files, **5 hook scripts (executable)**, a `.state/` directory, and a final message to the user reminding them to open a new session for stage 03.
+`.claude/` exists in the target project with settings.json, all 9 skill files, all 10 agent files, **5 hook scripts (executable)**, a `.state/` directory, and a final message to the user to start a fresh session so the bootstrapped `.claude/` is active for stage 03.
