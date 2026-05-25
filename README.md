@@ -1,4 +1,5 @@
 # Jacquard
+![Jacquard Loom — every thread precisely routed](assets/banner.jpg)
 
 **Every thread precisely routed — research-first AI coding for complex domains.**
 
