@@ -25,7 +25,7 @@ model: sonnet
 
 ## Job
 - `requirements.md`: user stories (`As a [role], I want [capability], so that [outcome]`), testable acceptance criteria, non-functional requirements, explicit non-requirements. Use `templates/requirements.md`.
-- `design.md`: architecture diagram (ASCII/mermaid), data model, API surface, 2–4 key sequence flows, tech-stack choices with reasoning, rejected alternatives. Use `templates/design.md`.
+- `design.md`: architecture diagrams in **Mermaid** (mandatory — they render on GitHub and are readable by non-technical reviewers). Must include: (1) a component diagram (`graph TD`) showing all major components, data flow, and external systems from the integration context, with edges labeled by protocol/format; (2) a sequence diagram (`sequenceDiagram`) for the 1-2 most complex user actions. Each diagram followed by a plain-language paragraph for non-technical readers. Plus: data model, API surface, tech-stack choices with reasoning, rejected alternatives. Use `templates/design.md`.
 - `eval-spec.md`: per user-story, testable pass criteria. Each criterion gets an **evaluator type** — either deterministic or non-deterministic:
   - **Deterministic** (`unit test` / `integration test` / `browser verifier` / `manual`): a **named test signature** (e.g., `test_upload_rejects_files_over_10mb` for pytest, `uploadRejectsFilesOver10MB` for vitest).
   - **Non-deterministic** (`llm-as-judge` / `schema-check` / `semantic-match` / `regex-match` / `threshold`): a **named eval signature** (e.g., `eval_summarizer_preserves_key_facts`), a **pass threshold** (e.g., "≥4/5 judge score in 8/10 runs"), and a **sample size** (e.g., N=10).

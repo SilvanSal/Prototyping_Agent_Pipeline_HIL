@@ -4,11 +4,40 @@ _Feature ID: [feature-slug] · Created: [YYYY-MM-DD]_
 
 ## Architecture overview
 
-```
-[ASCII or mermaid diagram of components and their connections]
+```mermaid
+%% System-level component diagram. Show every major component, its
+%% responsibility (one phrase), and how data flows between them.
+%% Include external systems from the constitution's integration context
+%% (upstream sources, downstream consumers, coexisting systems).
+%% Use subgraphs to group related components (e.g., "Backend", "Data layer").
+%% Label edges with the protocol or data format (REST, gRPC, CSV, SQL, etc.).
+
+graph TD
+    subgraph External
+        A[Upstream source] -->|format| B[Your component]
+    end
 ```
 
-[1 paragraph narrating the diagram.]
+[1 paragraph narrating the diagram for a non-technical reader: what the boxes are, what the arrows mean, where data enters and leaves.]
+
+```mermaid
+%% Data-flow diagram for the 1-2 most complex user actions.
+%% Show the path of a single request/event through the system
+%% from user action to final state change. Label each step.
+
+sequenceDiagram
+    participant User
+    participant UI
+    participant API
+    participant DB
+    User->>UI: [action]
+    UI->>API: [call]
+    API->>DB: [query]
+    DB-->>API: [result]
+    API-->>UI: [response]
+```
+
+[1 paragraph explaining the sequence to a non-technical reader.]
 
 ## Tech-stack choices
 

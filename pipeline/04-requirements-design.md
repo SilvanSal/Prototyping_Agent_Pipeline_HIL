@@ -18,7 +18,10 @@ Translate research + clarifications into three named artifacts. Each has a diffe
 - Use `templates/requirements.md` as the skeleton.
 
 ### `design.md`
-- Architecture diagram (ASCII or mermaid) — components and their connections.
+- Architecture diagrams in **Mermaid** (mandatory, not ASCII — they render on GitHub and are readable by non-technical reviewers):
+  - A **component diagram** (`graph TD`) showing all major components, their responsibilities, data flow between them, and external systems from the constitution's integration context. Label edges with protocols/formats.
+  - A **sequence diagram** (`sequenceDiagram`) for the 1-2 most complex user actions, showing the request path through the system.
+  - Each diagram must be followed by a **plain-language paragraph** explaining it for a non-technical reader (domain expert, product owner).
 - Data model — entities, fields, relationships. Migration path if applicable.
 - API surface — endpoints, request/response shapes, auth model. For non-HTTP, equivalent contract.
 - Key sequence flows for 2–4 core user actions.
