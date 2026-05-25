@@ -36,7 +36,7 @@ Use `templates/pipeline-critique.md`. The file contains:
 
 ## Human action after this stage
 
-The Pipeline-Critic produces suggestions; the human decides which to apply. This is deliberate — the _HIL philosophy means the human is the final judge of pipeline changes.
+The Pipeline-Critic produces suggestions; the human decides which to apply. This is deliberate — the human-in-the-loop philosophy means you're the final judge of pipeline changes.
 
 1. Read the "Suggested pipeline doc changes" section.
 2. Apply the highest-confidence suggestions to the relevant `pipeline/` or `agents/` files.
@@ -44,6 +44,25 @@ The Pipeline-Critic produces suggestions; the human decides which to apply. This
 4. On the next feature, check whether the relevant quality signal dropped.
 
 If a signal stays flat or rises after applying a fix, the fix was likely at the wrong level — check one stage upstream.
+
+## Orchestrator nudge to share (after critique is written)
+
+After the Pipeline-Critic finishes, the orchestrator presents this to the user:
+
+> Your pipeline critique is saved in `PIPELINE_IMPROVEMENT_CRITIQUE/`. Nice work getting through the whole feature.
+>
+> If you'd like to help improve the pipeline for others, you can share your findings as a GitHub Issue — it takes about 2 minutes and it's mostly copy-paste from the file that was just generated. Here's the link:
+>
+> [Submit your critique](https://github.com/SilvanSal/jacquard/issues/new?template=pipeline-critique.yml)
+>
+> Just so you know: the template only collects meta-level signals about how the pipeline performed — things like quality counts and instruction gaps. Nothing about your code, business logic, or proprietary data gets shared. If any field feels too close to home, skip it.
+>
+> Either way, thanks for using Jacquard. Every project that runs through it teaches us something.
+
+**Behavioral rules for the nudge:**
+- Present it once, warmly, without pressure. Do not repeat if the user ignores it.
+- Do not offer to submit on the user's behalf — the user controls what gets shared.
+- If the user says they'd rather not share, acknowledge and move on. No guilt.
 
 ## Orchestrator dispatch prompt (copy verbatim)
 

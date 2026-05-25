@@ -1,20 +1,24 @@
 name: Pipeline Critique Submission
-description: Submit your Stage 10 pipeline critique after completing a feature. These submissions improve the pipeline for everyone.
+description: Share what worked and what didn't after completing a feature. Your feedback directly shapes the next version of the pipeline.
 title: "[Critique] <domain> — <project-slug>"
 labels: ["critique", "community-data"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for submitting your pipeline critique! Every submission makes the pipeline better for the next person.
+        Hey, thanks for taking the time to share this — it genuinely matters.
 
-        **Privacy:** Do not include proprietary code, credentials, or sensitive business logic. The critique template is designed to capture pipeline friction, not your project's secrets.
+        Every critique that comes in helps us spot patterns we can't see from our side. You ran the pipeline on a real project with real stakes, and that perspective is incredibly valuable.
+
+        **A quick note on privacy:** We only collect meta-level signals here — things like "Stage 03 asked the wrong questions" or "the Coder deviated from the step-spec twice." None of this touches your actual code, business logic, or proprietary data. The template is designed so you can share freely without worrying about leaking anything sensitive. If a field feels too close to home, skip it — no field is more important than your comfort.
+
+        That said: please don't paste credentials, proprietary algorithms, client names, or anything you wouldn't put in a public tweet. When in doubt, leave it out.
 
   - type: input
     id: domain
     attributes:
-      label: Domain
-      description: What domain was the project in?
+      label: What domain was the project in?
+      description: Just the general area — no need to name the specific product or client.
       placeholder: e.g., pharmaceutical compliance, fintech, IoT fleet management
     validations:
       required: true
@@ -22,8 +26,8 @@ body:
   - type: dropdown
     id: domain_complexity
     attributes:
-      label: Domain complexity
-      description: How much domain-specific knowledge was needed?
+      label: How deep was the domain?
+      description: This helps us understand which pipeline stages need the most attention for different complexity levels.
       options:
         - Low (standard CRUD / web app)
         - Medium (domain rules but well-documented)
@@ -35,8 +39,8 @@ body:
   - type: dropdown
     id: human_profile
     attributes:
-      label: Human profile used
-      description: Who was the human in the loop?
+      label: Who was in the driver's seat?
+      description: This tells us which interaction mode you used — it affects which stages matter most.
       options:
         - Developer (inline)
         - Domain expert (inline)
@@ -57,7 +61,7 @@ body:
     id: quality_signals
     attributes:
       label: Quality signal summary
-      description: Copy the quality signal table from your PIPELINE_IMPROVEMENT_CRITIQUE/[feature]-[date].md
+      description: Copy the quality signal table from your critique file. These numbers are the heartbeat of how the pipeline performed — no interpretation needed, just the raw counts.
       placeholder: |
         | Signal | This run | Target |
         |---|---|---|
@@ -72,8 +76,8 @@ body:
   - type: textarea
     id: instruction_gaps
     attributes:
-      label: Pipeline instruction gaps identified
-      description: Copy the "Pipeline instruction gaps" section. These are the most valuable data points for improving the pipeline.
+      label: Where did the pipeline instructions let you down?
+      description: This is the most valuable part of your submission. Copy the "Pipeline instruction gaps" section from your critique. Each gap points us to a specific doc we need to fix.
       placeholder: "Gap 1 — [what went wrong] → root: [which pipeline doc was unclear]..."
     validations:
       required: true
@@ -81,16 +85,16 @@ body:
   - type: textarea
     id: suggestions
     attributes:
-      label: Top suggested pipeline changes
-      description: Copy the top 3 suggestions from "Suggested pipeline doc changes"
+      label: Your top suggested changes
+      description: Copy the top 3 suggestions. These go straight into our improvement backlog.
     validations:
       required: true
 
   - type: textarea
     id: architectural_implications
     attributes:
-      label: Architectural implications that mattered most
-      description: Which Section 7 findings from domain research actually influenced the design? Which were irrelevant?
+      label: Which research findings actually mattered?
+      description: Which architectural implications from domain research influenced the final design? Which turned out to be irrelevant? This helps us calibrate how deep the research stage should go for different domain types.
     validations:
       required: false
 
@@ -98,14 +102,14 @@ body:
     id: expert_questionnaire_feedback
     attributes:
       label: Expert questionnaire feedback (async mode only)
-      description: If you used async domain expert mode — how many rounds were needed? Were the questions well-phrased? Did the follow-up research based on answers add value?
+      description: If you used async domain expert mode — how many rounds did it take? Were the questions well-phrased? Did the follow-up research based on answers actually add value, or was it going through the motions?
     validations:
       required: false
 
   - type: textarea
     id: freeform
     attributes:
-      label: Anything else
-      description: Pain points, surprises, things that worked better than expected
+      label: Anything else on your mind
+      description: Pain points, surprises, things that worked better than expected, things that made you want to throw your laptop. All fair game.
     validations:
       required: false

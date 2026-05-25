@@ -35,7 +35,7 @@ The pipeline is human-in-the-loop by design. Stages like domain research involve
 4. The pipeline reads your materials, asks you some targeted questions, then does deep domain research. After that, it designs and builds — pausing at human gates (clarify questions, slice plan approval) for your input.
 5. You never need to `/clear` or manually continue to the next stage — the orchestrator auto-advances.
 6. If the context window fills up, the orchestrator writes a continuation file (`specs/.pipeline-state/continue.md`). Start a fresh session and `@`-reference that file to pick up where it left off.
-7. After the feature ships, submit your Stage 10 critique as a [GitHub Issue](https://github.com/SilvanSal/Prototyping_Agent_Pipeline_HIL/issues/new?template=pipeline-critique.yml) to help improve the pipeline for everyone.
+7. After the feature ships, the pipeline critiques itself (Stage 10) and asks if you'd like to share your findings. If you do, submit as a [GitHub Issue](https://github.com/SilvanSal/jacquard/issues/new?template=pipeline-critique.yml) — it only captures meta-level pipeline friction, never your code or business logic.
 
 ## Directory layout
 
@@ -133,19 +133,23 @@ Each subagent reads only what its job requires. The orchestrator enforces this i
 
 ## Community flywheel
 
-This pipeline improves from aggregate evidence across projects. The more people run it on real projects and submit their Stage 10 critiques, the better the instructions get for everyone.
+Here's the deal: every time you finish a feature, the pipeline automatically generates a critique of *itself* — what worked, what caused friction, which instructions were unclear. That critique stays in your repo. But if you share it with us, it makes the pipeline better for the next person who tackles a project like yours.
 
-### How to contribute
+### How it works
 
-After completing a feature, run Stage 10 (Pipeline Critic). Then submit your critique as a **GitHub Issue** using the [Pipeline Critique template](https://github.com/SilvanSal/Prototyping_Agent_Pipeline_HIL/issues/new?template=pipeline-critique.yml). Issues don't conflict with each other — every submission is independent, searchable, and taggable by domain.
+After your last slice ships, Stage 10 (Pipeline Critic) runs automatically and produces a critique file in `PIPELINE_IMPROVEMENT_CRITIQUE/`. Then the pipeline will ask if you'd like to share your findings. If you're up for it, submit it as a [GitHub Issue](https://github.com/SilvanSal/jacquard/issues/new?template=pipeline-critique.yml) — takes about 2 minutes, mostly copy-paste from the file the agent already wrote for you.
 
 **What we learn from each submission:**
-- Which pipeline instructions caused friction (and which were clear)
-- Which domain types the pipeline handles well vs poorly
-- Whether the async domain-expert questionnaire rounds produced useful input
-- Which architectural implication categories mattered in practice
+- Which pipeline instructions caused friction (and which were crystal clear)
+- Which domain types the pipeline handles well vs where it struggles
+- Whether the research loop went deep enough or spun its wheels
+- Which architectural findings actually shaped the final design
 
-**Privacy:** The critique template captures pipeline friction signals, not your project's code or business logic. Never include credentials, proprietary algorithms, or sensitive data.
+### Your data stays yours
+
+We want to be upfront about this: **nothing about your project's code, business logic, or proprietary information gets shared.** The critique template collects only meta-level signals — things like "the Coder deviated from the step-spec twice" or "Stage 03 asked the wrong questions." It's pipeline friction data, not your intellectual property.
+
+The template is designed so you can fill it out without thinking twice about confidentiality. And if any field feels too close to home, skip it — we'd rather get a partial submission than make you uncomfortable. Your trust matters more than any data point.
 
 ### What we're optimizing for
 
