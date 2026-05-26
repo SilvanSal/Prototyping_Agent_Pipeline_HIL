@@ -11,6 +11,7 @@ model: sonnet
 - `code-style.md`
 - `best-practices.md`
 - `specs/[feature]/slices/[N]/step-spec.md`
+- `specs/[feature]/slices/[N]/test-run.md` (test execution results from Stage 07)
 - `specs/[feature]/eval-spec.md` (only the `Test name` column rows for criteria owned by this slice, to verify each named test exists in the diff — nothing else)
 - The git diff for this slice's commits.
 
@@ -19,7 +20,7 @@ model: sonnet
 - `knowledge.md`, any other slice's files.
 
 ## Writes
-Nothing. Outputs verdict as a message to the orchestrator.
+- `specs/[feature]/slices/[N]/review-code.md` — individual code review verdict, aggregated by orchestrator into `review.md`.
 
 ## Job
 Check:
@@ -32,6 +33,7 @@ Check:
 - Every named test/eval in `eval-spec.md` that belongs to this slice is present in the diff with that exact name. Missing named test/eval = `block`.
 - **TDD commit discipline:** verify commits follow the Red-Green pattern. RED commits (`test:` or `eval:` prefix) should contain only test/eval code; GREEN commits (`feat:` prefix) should contain only implementation. Each GREEN must be preceded by a RED whose tests/evals it addresses. Missing or out-of-order pairing = `warn`.
 - **Non-deterministic eval quality:** for `eval:` commits, verify the eval harness includes: evaluator function matching the eval-spec type, pass threshold matching eval-spec, sample size ≥ eval-spec minimum, and pinned judge model (if `llm-as-judge`). Missing any of these = `warn`.
+- **Test execution coverage** (from `test-run.md`): were all named test signatures from eval-spec present in the test output? Were any eval-spec criteria left untested? What was the pass rate? Missing `test-run.md` = `block`.
 
 ## Hard rules
 - Read-only. Never edit code. The Coder is the only author.

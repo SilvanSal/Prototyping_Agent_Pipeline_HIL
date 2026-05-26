@@ -1,7 +1,7 @@
 # Stage 05 — Plan Vertical Slices
 
 **Run by:** `Slice-Planner` subagent (fresh context)
-**Reads:** `specs/[feature]/design.md`, `specs/[feature]/eval-spec.md`, `tech-stack.md`, `specs/constitution.md`
+**Reads:** `specs/[feature]/phase-plan.md`, `specs/[feature]/design.md`, `specs/[feature]/eval-spec.md`, `tech-stack.md`, `specs/constitution.md`
 **Produces:** `specs/[feature]/slice-plan.md`
 
 ## Purpose
@@ -24,13 +24,20 @@ Use `templates/slice-plan.md`. The file contains:
 2. **Slice ordering rationale** — 1 paragraph per ordering decision. Why is S01 first? Why not S03?
 3. **Known risks** — slices you are least confident about, and why. These get the most careful step-research later.
 
+## Phase scoping
+
+Read `specs/[feature]/phase-plan.md` first. The Slice-Planner targets **only the selected phase's requirements**. Each slice must reference at least one requirement from the active phase. Slices that would satisfy requirements from a different phase are out of scope for this planning pass.
+
+If `phase-plan.md` does not exist (small feature with no phase planning), plan against the full requirements set.
+
 ## Rules for this stage
 
+- **Scope to the active phase.** Only plan slices for requirements listed in the selected phase of `phase-plan.md`. Requirements from other phases are out of scope.
 - **Every slice ships user-visible value.** "Set up database schema" is NOT a slice. "User can create an account and see their name" is a slice (which happens to include schema work).
 - **No backend-first layering.** If you find yourself writing "S01: build all models, S02: build all APIs, S03: build all UI", you are wrong. Restart.
 - **Prefer smaller earlier slices.** S01 should be the smallest slice that ships real behavior. Build momentum, reveal unknowns early.
 - **Defer sub-tasks.** Do not expand any slice into a task list. Stages 06 and 07 handle that per-slice, just-in-time.
-- **Cap at 8 slices per planning pass.** If the feature needs more, split it into sub-features with their own stage-04 runs, or mark slices beyond 8 as "_planned, awaits re-plan after S04 lands_".
+- **Cap at 8 slices per planning pass.** If the phase's requirements cannot be decomposed into ≤8 slices without each being enormous, halt and present three options to the user: (A) reduce scope for this phase, (B) allow up to 12 slices (user accepts a longer cycle), (C) split the phase into P1a and P1b as separate runs.
 - **Use the eval-spec.** Every slice must satisfy at least one eval-spec criterion. If a slice satisfies none, either it's unnecessary or the eval-spec is incomplete.
 
 ## When this stage re-runs
@@ -39,9 +46,9 @@ Slice-Planner re-runs (not first time) after each slice lands, when the Handoff-
 
 ## Orchestrator dispatch prompt (copy verbatim)
 
-> You are the Slice-Planner subagent. Fresh context. Read: `specs/[feature]/design.md`, `specs/[feature]/eval-spec.md`, `tech-stack.md`, `specs/constitution.md`. If `specs/[feature]/slice-plan.md` already exists, also read it and the latest `specs/[feature]/slices/[N]/handoff.md`.
+> You are the Slice-Planner subagent. Fresh context. Read: `specs/[feature]/phase-plan.md` (if it exists — note the selected phase), `specs/[feature]/design.md`, `specs/[feature]/eval-spec.md`, `tech-stack.md`, `specs/constitution.md`. If `specs/[feature]/slice-plan.md` already exists, also read it and the latest `specs/[feature]/slices/[N]/handoff.md`.
 >
-> Your job: produce `specs/[feature]/slice-plan.md` using the skeleton in `templates/slice-plan.md`. Do NOT break slices into sub-tasks. Do NOT pick files or code locations. Do NOT read `specs/research/domain.md` or `best-practices.md` — they are not relevant to slice planning.
+> Your job: produce `specs/[feature]/slice-plan.md` using the skeleton in `templates/slice-plan.md`. If a phase-plan exists, scope slices to the selected phase's requirements only — do not plan slices for other phases. Do NOT break slices into sub-tasks. Do NOT pick files or code locations. Do NOT read `specs/research/domain.md` or `best-practices.md` — they are not relevant to slice planning.
 >
 > Verify every slice satisfies at least one eval-spec criterion by ID. If any eval-spec criterion is not covered by any slice, flag it explicitly.
 >

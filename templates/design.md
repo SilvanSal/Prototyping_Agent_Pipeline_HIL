@@ -2,6 +2,54 @@
 
 _Feature ID: [feature-slug] · Created: [YYYY-MM-DD]_
 
+## Architecture candidates considered
+
+Enumerate at least 3 candidate architectures before committing. For each: name, 2-sentence description, explicit tradeoffs, and why it was selected or rejected.
+
+### Candidate 1: [Name]
+
+**Description:** [2 sentences]
+**Tradeoffs:**
+| Dimension | Assessment |
+|---|---|
+| Latency | |
+| Cost | |
+| Operational complexity | |
+| Team skill fit | |
+| Scalability ceiling | |
+
+**Verdict:** Selected / Rejected — [one-sentence reason]
+
+### Candidate 2: [Name]
+
+**Description:** [2 sentences]
+**Tradeoffs:**
+| Dimension | Assessment |
+|---|---|
+| Latency | |
+| Cost | |
+| Operational complexity | |
+| Team skill fit | |
+| Scalability ceiling | |
+
+**Verdict:** Selected / Rejected — [one-sentence reason]
+
+### Candidate 3: [Name]
+
+**Description:** [2 sentences]
+**Tradeoffs:**
+| Dimension | Assessment |
+|---|---|
+| Latency | |
+| Cost | |
+| Operational complexity | |
+| Team skill fit | |
+| Scalability ceiling | |
+
+**Verdict:** Selected / Rejected — [one-sentence reason]
+
+---
+
 ## Architecture overview
 
 ```mermaid
@@ -91,14 +139,6 @@ Migration path:
 5. API returns [...]
 6. UI renders [...]
 ```
-
-## Rejected alternatives
-
-Options considered and why they lost. Future readers will thank you.
-
-| Option | Why rejected |
-|---|---|
-| | |
 
 ## Open questions deferred to Slice-Planner
 

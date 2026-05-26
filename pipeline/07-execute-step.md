@@ -2,7 +2,7 @@
 
 **Run by:** `Coder` subagent (fresh context per step, full Write/Edit/Bash with scoped paths from `.claude/settings.json`)
 **Reads:** `specs/[feature]/slices/[N]/step-spec.md`, `specs/[feature]/slices/[N]/knowledge.md`, `best-practices.md`, `code-style.md`, `tech-stack.md`, `specs/[feature]/slices/[N-1]/handoff.md` (if `N > 1`), `specs/error-registry.md` (grep-only before debugging), `specs/research/hallucination-traps.md` (grep-only before writing in an unfamiliar area)
-**Produces:** code + one or more commits in the target project · may append one entry to `specs/error-registry.md` and/or one row to `specs/research/hallucination-traps.md` per confirmed trap
+**Produces:** code + one or more commits in the target project · `specs/[feature]/slices/[N]/test-run.md` · `specs/[feature]/slices/[N]/touched-files.txt` · may append one entry to `specs/error-registry.md` and/or one row to `specs/research/hallucination-traps.md` per confirmed trap
 
 ## Purpose
 
@@ -16,7 +16,9 @@ Execute exactly one slice. The Coder writes real application code. This is the O
 4. Read best-practices.md, code-style.md, tech-stack.md. These frame *how* to write, not *what* to write.
 5. Execute sub-tasks in TDD pairs — Red then Green. See "TDD discipline" below.
 6. After the last GREEN sub-task, run the full test suite (or whatever `best-practices.md` says "done" means). If tests fail, fix. If you cannot fix within your scope, write a clear failure report and stop — do not proceed to review.
-7. Hand off to the Orchestrator with: commit SHAs, test status, Red/Green confirmation per pair, any deviations from the step-spec and why.
+7. **Write `specs/[feature]/slices/[N]/test-run.md`** using `templates/test-run.md`: command run, pass/fail/skip counts, duration, commit SHA, names of any skipped tests with reasons. This file is a gate — Stage 08 does not begin without it.
+8. **Write `specs/[feature]/slices/[N]/touched-files.txt`** — append the list of files modified across all sub-tasks, one per line, format: `[SHA] [file-path]`. This powers the pre-slice drift check for the next slice.
+9. Hand off to the Orchestrator with: commit SHAs, test status, Red/Green confirmation per pair, any deviations from the step-spec and why.
 
 ## TDD discipline — Red-Green-Refactor
 
@@ -166,8 +168,10 @@ The Coder treats `specs/error-registry.md` and `specs/research/hallucination-tra
 >
 > Long-stage context discipline: after every sub-task, abbreviate tool output older than two sub-tasks back (keep SHAs, files, error signatures; drop raw diffs/dumps). Before sub-task 4, write a one-paragraph self-summary (sub-tasks done, files+SHAs, deviations, remaining verbatim). Before sub-task 7, drop all detail from sub-tasks 1..N−3 except SHAs + deviation log. Any single tool result >~4K chars: abbreviate to first ~20 lines + count tag in your reasoning. Never discard the deviation log, micro-research log, registry appends, running file list, or the step-spec itself. On 413 mid-sub-task: stop, compact per marker 3, retry once, log as deviation. Full rules: `pipeline/07-execute-step.md` § "Long-stage context discipline".
 >
+> **Post-implementation:** After all sub-tasks, run the full test suite. Write `specs/[feature]/slices/[N]/test-run.md` per `templates/test-run.md` (command, pass/fail/skip counts, duration, commit SHA, skipped test names). If any test fails, fix it before writing test-run.md — do not proceed with failures. Also write `specs/[feature]/slices/[N]/touched-files.txt` listing every file you modified, one per line, format: `[SHA] [file-path]`.
+>
 > When done, output: commit SHAs in order (tagged RED or GREEN), test status (pass/fail/skipped), eval status (pass/fail/skipped with pass rates per non-deterministic criterion), Red-Green confirmation per pair (test/eval failed at RED, passed at GREEN), any deviations with reasoning (including any micro-research lookups), and any error-registry / hallucination-traps appends. Stop.
 
 ## Stop condition
 
-All sub-task pairs from step-spec.md are committed (RED then GREEN for each pair). Every RED commit has a confirmed test failure; every GREEN commit has those tests passing. Full test suite passes (or failures are documented with reasoning). Coder has reported commit SHAs (tagged RED/GREEN) and deviations back to the orchestrator. Orchestrator then dispatches stage 08.
+All sub-task pairs from step-spec.md are committed (RED then GREEN for each pair). Every RED commit has a confirmed test failure; every GREEN commit has those tests passing. Full test suite passes (or failures are documented with reasoning). `specs/[feature]/slices/[N]/test-run.md` exists with pass/fail counts and zero failures. `specs/[feature]/slices/[N]/touched-files.txt` exists with all files modified by this slice. Coder has reported commit SHAs (tagged RED/GREEN) and deviations back to the orchestrator. Orchestrator then dispatches stage 08.

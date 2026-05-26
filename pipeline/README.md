@@ -31,6 +31,10 @@ One-screen map of the 12 stages (00–11). For rules, read `pipeline/00-constitu
                                       ▼
   04  requirements-design     (Architect)           → specs/[feature]/requirements.md
                                                       + design.md + eval-spec.md
+                                                      + architect-qa.md (conditional)
+                                      │
+                                      ▼
+  04.5 phase-planning         (Phase-Planner)       → specs/[feature]/phase-plan.md  ◄── USER GATE (approve + select phase)
                                       │
                                       ▼
   05  plan-slices             (Slice-Planner)       → specs/[feature]/slice-plan.md   ◄── USER GATE
@@ -48,12 +52,14 @@ One-screen map of the 12 stages (00–11). For rules, read `pipeline/00-constitu
   ║                                   ▼                                            ║
   ║  07  execute-step          (Coder, TDD)          → code + commits (RED/GREEN)   ║
   ║       07a eval-harness     (conditional read)    only if step-spec has evals   ║
+  ║                                                 + test-run.md + touched-files  ║
   ║                                                 may append error-registry +    ║
   ║                                                 hallucination-traps            ║
   ║                                   │                                            ║
   ║                                   ▼                                            ║
-  ║  08  review                ┌─ Code-Reviewer ─┐  → slices/[N]/review.md         ║
-  ║                            └─ Security-Rev.  ┘  (parallel, fresh context)      ║
+  ║  08  review                ┌─ Code-Reviewer ─┐  → review-code.md               ║
+  ║                            └─ Security-Rev.  ┘  → review-security.md           ║
+  ║                            (parallel, fresh ctx) → review.md (aggregated)      ║
   ║                                   │                                            ║
   ║                                   ▼                                            ║
   ║  09  write-handoff         (Handoff-Writer)     → slices/[N]/handoff.md        ║
@@ -108,6 +114,8 @@ One-screen map of the 12 stages (00–11). For rules, read `pipeline/00-constitu
 | Before stage 00 | Welcome (new project only) | User says "Ready" |
 | After stage 00.5 | Intake-Reader Q&A (5–10 questions) | User answers all questions |
 | After stage 03 | User ("A/B/C/D" clarify answers) | User types "Go" |
+| During stage 04 | Architect Q&A (conditional) | User answers ≤3 architecture questions |
+| After stage 04.5 | User reviews phase-plan | User approves and selects a phase |
 | After stage 05 | User reviews slice-plan | User approves |
 | Before stage 06 (N ≥ 2) | drift check halts if repo moved outside last slice's file list | User picks absorb / ignore / revert |
 | After stage 08 | `block` verdict from Code- or Security-Reviewer | Return to stage 07 with fixes |
@@ -136,14 +144,21 @@ specs/
 ├── clarify-[feature].md               ← stage 03
 └── [feature]/
     ├── requirements.md                ← stage 04
-    ├── design.md                      ← stage 04
+    ├── design.md                      ← stage 04 (includes architecture candidates)
     ├── eval-spec.md                   ← stage 04
+    ├── architect-qa.md                ← stage 04.3 (conditional — only if Q&A gate fired)
+    ├── phase-plan.md                  ← stage 04.5
     ├── slice-plan.md                  ← stage 05
+    ├── session-log.md                 ← stage 09 (append-only, one line per slice)
     ├── ui-verification.md             ← end-of-feature
     └── slices/[N]/
         ├── step-spec.md               ← stage 06
         ├── knowledge.md               ← stage 06
-        ├── review.md                  ← stage 08
+        ├── test-run.md                ← stage 07 (test execution results)
+        ├── touched-files.txt          ← stage 07 (files modified, powers drift check)
+        ├── review-code.md             ← stage 08 (Code-Reviewer individual verdict)
+        ├── review-security.md         ← stage 08 (Security-Reviewer individual verdict)
+        ├── review.md                  ← stage 08 (aggregated by orchestrator)
         └── handoff.md                 ← stage 09
 
 project root/

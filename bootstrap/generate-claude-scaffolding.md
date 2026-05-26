@@ -21,16 +21,19 @@ Turn the playbook (these files) into *target-project-native* Claude Code scaffol
 └── .claude/
     ├── settings.json                # permissions + hooks
     ├── agents/
+    │   ├── intake-reader.md
     │   ├── domain-researcher.md
     │   ├── codebase-explorer.md
     │   ├── architect.md
+    │   ├── phase-planner.md
     │   ├── slice-planner.md
     │   ├── step-researcher.md
     │   ├── coder.md
     │   ├── code-reviewer.md
     │   ├── security-reviewer.md
     │   ├── browser-verifier.md
-    │   └── handoff-writer.md
+    │   ├── handoff-writer.md
+    │   └── pipeline-critic.md
     ├── hooks/
     │   ├── require-step-spec.sh     # PreToolUse: block Write/Edit outside specs/ without a step-spec
     │   ├── require-plan.sh          # PreToolUse: block Write if no slice-plan.md exists
@@ -45,11 +48,13 @@ Turn the playbook (these files) into *target-project-native* Claude Code scaffol
 
 Subagent definitions live at `agents/[name].md`. **Copy them into `.claude/agents/` in the target project.** Do NOT re-derive them from `pipeline/*.md` — the pre-authored versions are the source of truth and are designed to stay consistent across projects.
 
-### Agents to copy (10)
+### Agents to copy (13)
 ```
+agents/intake-reader.md
 agents/domain-researcher.md
 agents/codebase-explorer.md
 agents/architect.md
+agents/phase-planner.md
 agents/slice-planner.md
 agents/step-researcher.md
 agents/coder.md
@@ -57,6 +62,7 @@ agents/code-reviewer.md
 agents/security-reviewer.md
 agents/browser-verifier.md
 agents/handoff-writer.md
+agents/pipeline-critic.md
 ```
 
 ### Per-project substitutions
@@ -70,7 +76,7 @@ The pre-authored files are almost project-agnostic. Only these tokens vary and m
 **Do not narrow tool lists beyond the pinned tech-stack.** If `tech-stack.md` pins `pytest`, add `Bash(pytest*)`; if it doesn't, omit.
 
 ### Model overrides
-Default is `sonnet` for all agents. Promote `architect` and `slice-planner` to `opus` for complex features. Keep reviewers on `sonnet` — parallel dispatch benefits from faster, cheaper runs.
+Default is `sonnet` for most agents. `architect` and `slice-planner` are pinned to `opus` — they make structural decisions that downstream stages cannot revisit cheaply. Keep reviewers on `sonnet` — parallel dispatch benefits from faster, cheaper runs.
 
 ### Constraints that must survive the copy
 - **All reviewers are read-only.** No Write/Edit in `tools:`.
@@ -168,6 +174,7 @@ path=$(jq -r '.tool_input.file_path // empty' <<< "$CLAUDE_HOOK_INPUT")
 case "$path" in
   specs/*|*/specs/*) exit 0 ;;
   .claude/*|*/.claude/*) exit 0 ;;
+  input/*|*/input/*) exit 0 ;;
   */CLAUDE.md|*/tech-stack.md|*/code-style.md|*/best-practices.md|CLAUDE.md|tech-stack.md|code-style.md|best-practices.md) exit 0 ;;
 esac
 
@@ -198,6 +205,7 @@ path=$(jq -r '.tool_input.file_path // empty' <<< "$CLAUDE_HOOK_INPUT")
 case "$path" in
   specs/*|*/specs/*) exit 0 ;;
   .claude/*|*/.claude/*) exit 0 ;;
+  input/*|*/input/*) exit 0 ;;
   */CLAUDE.md|*/tech-stack.md|*/code-style.md|*/best-practices.md|CLAUDE.md|tech-stack.md|code-style.md|best-practices.md) exit 0 ;;
 esac
 
@@ -364,4 +372,4 @@ fi
 
 ## Stop condition
 
-`.claude/` exists in the target project with settings.json, all 10 agent files, **5 hook scripts (executable)**, a `.state/` directory, and a final message to the user to start a fresh session so the bootstrapped `.claude/` is active for stage 03.
+`.claude/` exists in the target project with settings.json, all 13 agent files, **5 hook scripts (executable)**, a `.state/` directory, and a final message to the user to start a fresh session so the bootstrapped `.claude/` is active for stage 03.

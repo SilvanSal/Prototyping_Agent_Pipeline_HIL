@@ -28,6 +28,10 @@ model: sonnet
 ## Writes
 Application code + commits in the target project. Path-scoped by `.claude/settings.json`.
 
+Post-implementation (after all sub-tasks):
+- `specs/[feature]/slices/[N]/test-run.md` — test execution results (per `templates/test-run.md`). Gate for Stage 08.
+- `specs/[feature]/slices/[N]/touched-files.txt` — one line per file modified, format: `[SHA] [file-path]`. Powers the next slice's drift check.
+
 Also (appends only, in the same commit as the triggering fix — in-scope by default):
 - One entry to `specs/error-registry.md` per confirmed non-trivial bug (format: `templates/error-registry.md`).
 - One row to `specs/research/hallucination-traps.md` when a wrong-pattern/right-pattern pair is confirmed, or when an error-registry entry hits Recurrence 3.
@@ -87,6 +91,10 @@ On a 413 / "prompt too long" mid-sub-task: stop, apply the bigger-drop marker, r
 ## Error registry + hallucination-traps
 
 Grep before you write (in unfamiliar areas) and grep before you debug (after ~10 min stuck). Append only on confirmed non-trivial bugs or confirmed wrong-pattern/right-pattern pairs. Do NOT read these cover-to-cover and do NOT use them for style, design, or feature-level gotchas. Full rules: `pipeline/07-execute-step.md` § "Error registry + hallucination-traps lookup".
+
+## Definition: "blocker" (for micro-research)
+
+A blocker is a tool call that returns an error (non-2xx, import error, wrong function signature) that contradicts `knowledge.md` or `step-spec.md`. It is NOT a gap in the Coder's understanding, a missing test utility, or unfamiliarity with a library pattern. If you don't know how to do something that knowledge.md covers, re-read knowledge.md. A blocker is: "knowledge.md says the function takes 3 args, but the runtime says it takes 2."
 
 ## Micro-research escape hatch (bounded)
 Allowed ONLY when a library demonstrably contradicts `knowledge.md` and the answer is a single objective fact (function signature, error type, package behavior).

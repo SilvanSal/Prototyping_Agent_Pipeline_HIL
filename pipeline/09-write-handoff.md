@@ -3,7 +3,7 @@
 **Run by:** `Handoff-Writer` subagent (fresh context, read-only + Write for the one output file)
 **Reads:** `specs/[feature]/slices/[N]/step-spec.md`, `specs/[feature]/slices/[N]/review.md`, the git diff for this slice's commits, commit messages, test output from the last run, `specs/[feature]/eval-spec.md`
 **Does NOT read:** the knowledge.md or the Coder's chat output. The handoff is grounded in artifacts, not narration.
-**Produces:** `specs/[feature]/slices/[N]/handoff.md`
+**Produces:** `specs/[feature]/slices/[N]/handoff.md` · appends one line to `specs/[feature]/session-log.md`
 
 ## Purpose
 

@@ -106,8 +106,6 @@ Compliance engines. Medical device controllers. Financial modeling tools. Scient
 
 **Session log.** Every pipeline session appends one line to `session-log.md` — stage, slice, status, review verdict, handoff path. A returning orchestrator reads the last entry before doing anything.
 
-**Pipeline versioning.** Generated projects carry a `pipeline-version` in `settings.json`. A version check fires at the start of each new feature. `CHANGELOG.md` documents every behavioral change with a flag for whether target projects should update.
-
 ---
 
 ## Directory Layout
@@ -124,13 +122,13 @@ Jacquard/
 │   ├── 01-research-domain.md
 │   ├── 02-research-codebase.md
 │   ├── 03-clarify.md
-│   ├── 04-requirements-design.md
-│   ├── 04.5-phase-planning.md
+│   ├── 04-requirements-design.md  # includes conditional 04.3 Architect Q&A gate
+│   ├── 04.5-phase-planning.md     # NEW — milestone decomposition before slice planning
 │   ├── 05-plan-slices.md
 │   ├── 06-research-step.md
-│   ├── 07-execute-step.md
-│   ├── 08-review.md
-│   ├── 09-write-handoff.md
+│   ├── 07-execute-step.md         # produces test-run.md + touched-files.txt
+│   ├── 08-review.md               # fork-join: parallel Code + Security review
+│   ├── 09-write-handoff.md        # appends to session-log.md
 │   ├── 10-pipeline-critique.md
 │   └── 11-iteration-loop.md
 ├── templates/                    # skeleton artifacts filled in by each stage
@@ -140,11 +138,14 @@ Jacquard/
 │   ├── research-finding.md       # rich schema for each research insight (YAML frontmatter + source chain)
 │   ├── research-findings-index.md # auto-maintained index with filter tables + dependency graph
 │   ├── requirements.md
-│   ├── design.md
+│   ├── design.md                 # includes "Architecture candidates considered" section
 │   ├── eval-spec.md
+│   ├── phase-plan.md             # NEW — milestone phases with user approval
 │   ├── slice-plan.md
 │   ├── step-spec.md
-│   ├── knowledge.md
+│   ├── knowledge.md              # version-based staleness (not time-based)
+│   ├── test-run.md               # NEW — test execution results gate
+│   ├── session-log.md            # NEW — append-only session tracking
 │   ├── handoff.md
 │   ├── error-registry.md         # project-scoped bug memory, empty-seeded at stage 01, grown by Coder
 │   ├── hallucination-traps.md    # project-scoped wrong/right-pattern lookup, optionally seeded at stage 01
@@ -158,7 +159,8 @@ Jacquard/
 │   ├── intake-reader.md
 │   ├── domain-researcher.md
 │   ├── codebase-explorer.md
-│   ├── architect.md
+│   ├── architect.md              # enumerates ≥3 candidates, optional Q&A gate
+│   ├── phase-planner.md          # NEW — decomposes requirements into milestone phases
 │   ├── slice-planner.md
 │   ├── step-researcher.md
 │   ├── coder.md

@@ -43,8 +43,17 @@ Translate research + clarifications into three named artifacts. Each has a diffe
 - Security checks required for this feature (e.g., "auth-free routes must not leak PII").
 - Use `templates/eval-spec.md` as the skeleton.
 
+## Architect Q&A gate (Stage 04.3 — conditional)
+
+Before writing `design.md`, the Architect checks whether any architectural decision genuinely hinges on user intent or business constraints not answerable from research or clarify answers. If ≥1 such decision exists, the Architect pauses and asks up to 3 A/B/C/D questions (one "(recommended)" per question). Answers are recorded in `specs/[feature]/architect-qa.md`.
+
+**How the orchestrator knows if the gate fired:** after the Architect returns, check whether `specs/[feature]/architect-qa.md` exists. If present, the Q&A was conducted. If absent, the gate did not fire — proceed normally.
+
+The Q&A gate is an internal part of Stage 04, not a separate dispatch. The Architect handles it within its own session.
+
 ## Rules for this stage
 
+- **Enumerate ≥3 candidate architectures.** Before writing the final architecture, the Architect must enumerate at least 3 candidate approaches in the "Architecture candidates considered" section of `design.md`. Each candidate has explicit tradeoffs. The selected one has a clear rationale. This forces genuine design thinking, not rubber-stamping the first idea.
 - **Respect the clarify answers literally.** If the user chose option B, design for option B. Do not silently upgrade to option C because it's "better".
 - **Respect the constitution's non-negotiables.** If a design choice violates a non-negotiable, stop and raise it — do not design around it without explicit user override.
 - **Address every architectural implication from domain research.** Read Section 7 ("Architectural implications extracted from research") of `specs/research/domain.md` carefully. For each implication listed, your design must either (a) incorporate it with an explicit reference to the finding, or (b) state why it doesn't apply to this feature, with reasoning. Do not silently ignore implications — they represent research-backed constraints on the software's structure. If an implication identifies problem taxonomies or complexity classes, your architecture must show how it routes or handles each relevant class (as scoped by the user's clarify answers).
@@ -66,9 +75,13 @@ Translate research + clarifications into three named artifacts. Each has a diffe
 >
 > Your job: produce three files under `specs/[feature]/` — `requirements.md`, `design.md`, `eval-spec.md` — using the skeletons in `templates/`. You may also update `tech-stack.md` in the project root if it was deferred from stage 02. You may NOT propose slices or write application code.
 >
+> **Before writing design.md:** enumerate at least 3 candidate architectures in the "Architecture candidates considered" section with explicit tradeoffs. Select one and document why the others were rejected.
+>
+> **Architect Q&A gate:** if any architectural decision genuinely depends on user intent not answerable from existing artifacts, pause and present up to 3 A/B/C/D questions. Record answers in `specs/[feature]/architect-qa.md`. If no such decisions exist, skip the Q&A and do not create that file.
+>
 > **Critical:** For each architectural constraint in the findings index AND each implication in Section 7 of `specs/research/domain.md`, your `design.md` must either incorporate it (with an explicit reference to the finding ID, e.g., "per RF-2026-05-25-003") or state why it doesn't apply. Do not silently ignore any constraint.
 >
-> When done, output the three file paths and a 3-bullet summary of the key design decisions. Stop.
+> When done, output the file paths (3 main files + `architect-qa.md` if it was created) and a 3-bullet summary of the key design decisions. Stop.
 
 ## Stop condition
 

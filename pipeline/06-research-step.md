@@ -47,14 +47,15 @@ The Step-Researcher's default is self-contained output. The dedup check is the n
 1. For every external library / API / endpoint the step-spec sub-tasks will touch, build a short keyword list (library name + method/endpoint name).
 2. For each keyword, `grep` across `specs/research/domain.md`, `specs/research/hallucination-traps.md`, `specs/error-registry.md`, and all existing `specs/[feature]/slices/*/knowledge.md` files. `grep`-only — do not open-and-read by default.
 3. If a match exists:
-   - Open that specific section (not the whole file). Check its timestamp: if older than 90 days or the pinned version differs from `tech-stack.md`, ignore the match and research fresh.
-   - If current: add a "See also:" pointer to your slice's `knowledge.md` — `See also: specs/[feature]/slices/S02/knowledge.md § POST /x endpoint (verified 2026-03-01, requests==2.31.0)`. Copy the minimum shape into your file anyway if the Coder would otherwise need to open two files; prefer pointer-only for large blobs.
-   - Record the reuse in your 5-bullet summary.
+   - Open that specific section (not the whole file). Compare the entry's `pinned-version` field against `tech-stack.md`'s current version for that library.
+   - **Versions match → entry is current.** Add a `See also:` pointer to your slice's `knowledge.md` — `See also: specs/[feature]/slices/S02/knowledge.md § POST /x endpoint (verified 2026-03-01, requests==2.31.0)`. Copy the minimum shape into your file if the Coder would otherwise need to open two files; prefer pointer-only for large blobs. Record the reuse in your 5-bullet summary.
+   - **Versions differ → entry is stale.** Research fresh. Flag the stale entry with: `STALE: tech-stack.md now pins [new version]; this entry was written for [old version].` Do NOT delete the stale entry. When researching fresh, explicitly search for: migration guides from old to new version, breaking changes in the changelog, known regressions in the new version.
+   - **No `pinned-version` field** (legacy format): treat as stale, research fresh.
 4. If no match: research fresh per the normal flow.
 
 **Hard rules:**
 - Dedup is topic-scoped, not read-the-whole-prior-file. The fresh-subagent invariant still holds — you do not pull prior step-spec, handoff, or design content through the dedup check.
-- If a prior entry is stale (version drift or >90 days), DO NOT update the prior file. Research fresh for this slice and note the stale prior entry in the orchestrator handoff so it can be refreshed separately.
+- If a prior entry is stale (version drift), DO NOT update the prior file. Research fresh for this slice and note the stale prior entry in the orchestrator handoff so it can be refreshed separately.
 - Stop after one pass. Dedup is not a research rabbit hole — budget one round of greps, then draft.
 
 ## Research findings surfacing

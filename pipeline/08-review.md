@@ -10,11 +10,22 @@
 
 ## Purpose
 
-Catch problems the Coder missed. Two narrow reviewers with differentiated reads beat one generalist reviewer. They run in parallel. Each produces a short verdict. The orchestrator aggregates them into one `review.md` and decides whether to advance.
+Catch problems the Coder missed. Two narrow reviewers with differentiated reads beat one generalist reviewer. They run in parallel in separate contexts — neither can see the other's verdict. The orchestrator aggregates their outputs into one `review.md` and decides whether to advance.
+
+## Fork-join protocol (orchestrator executes this, not the reviewers)
+
+1. Write `.claude/.state/current-stage` = `code-reviewer`.
+2. Dispatch Code-Reviewer with `run_in_background: true`. Name: `code-review-agent`.
+3. Write `.claude/.state/current-stage` = `security-reviewer`.
+4. Dispatch Security-Reviewer with `run_in_background: true`. Name: `security-review-agent`.
+5. Await completion of both agents (wait for both Done signals — do not poll).
+6. Read `specs/[feature]/slices/[N]/review-code.md` and `specs/[feature]/slices/[N]/review-security.md`.
+7. Aggregate into `specs/[feature]/slices/[N]/review.md` (see "Aggregation" below).
+8. If either verdict is `block`: halt. Surface blocking findings to user. Do not proceed to Stage 09 until resolved and review re-run.
 
 ## Code-Reviewer
 
-**Reads:** `code-style.md`, `best-practices.md`, `specs/[feature]/slices/[N]/step-spec.md`, `specs/[feature]/eval-spec.md` (only the `Test name` column rows for criteria this slice owns), the git diff for this slice's commits.
+**Reads:** `code-style.md`, `best-practices.md`, `specs/[feature]/slices/[N]/step-spec.md`, `specs/[feature]/slices/[N]/test-run.md`, `specs/[feature]/eval-spec.md` (only the `Test name` column rows for criteria this slice owns), the git diff for this slice's commits.
 **Does not read:** constitution, design, knowledge.md, any other slice's files.
 **Checks:**
 - Does the code follow `code-style.md`? Naming, imports, file organization.
@@ -93,11 +104,11 @@ Orchestrator reads both verdicts and writes `specs/[feature]/slices/[N]/review.m
 
 ## Orchestrator dispatch prompts
 
-**Code-Reviewer:**
-> You are the Code-Reviewer subagent. Fresh context, read-only. Read: `code-style.md`, `best-practices.md`, `specs/[feature]/slices/[N]/step-spec.md`, and the git diff for commits `[SHAs]`. Output verdict + numbered issues per `pipeline/08-review.md`. For `block` or `warn` issues, you may include a minimal, local suggested-fix snippet (text only — the Coder writes the actual patch). Never for `nit`. Stop.
+**Code-Reviewer (dispatch with `run_in_background: true`, name: `code-review-agent`):**
+> You are the Code-Reviewer subagent. Fresh context. Read: `code-style.md`, `best-practices.md`, `specs/[feature]/slices/[N]/step-spec.md`, `specs/[feature]/slices/[N]/test-run.md`, and the git diff for commits `[SHAs]`. Write your verdict to `specs/[feature]/slices/[N]/review-code.md`. Include a "Test coverage" section based on `test-run.md`: were all named tests present? Any eval-spec criteria untested? Pass rate? For `block` or `warn` issues, you may include a minimal, local suggested-fix snippet (text only — the Coder writes the actual patch). Never for `nit`. Stop.
 
-**Security-Reviewer:**
-> You are the Security-Reviewer subagent. Fresh context, read-only. Read: `specs/constitution.md` and the git diff for commits `[SHAs]`. You may use WebSearch for CVE checks on any added dependencies. Output verdict + numbered findings per `pipeline/08-review.md`. Stop.
+**Security-Reviewer (dispatch with `run_in_background: true`, name: `security-review-agent`):**
+> You are the Security-Reviewer subagent. Fresh context. Read: `specs/constitution.md` and the git diff for commits `[SHAs]`. You may use WebSearch for CVE checks on any added dependencies. Write your verdict to `specs/[feature]/slices/[N]/review-security.md`. Output format per `pipeline/08-review.md`. Stop.
 
 **Browser-Verifier (end-of-feature only — do NOT dispatch per slice):**
 > You are the Browser-Verifier subagent. Fresh context, no file reads except `specs/[feature]/eval-spec.md`. You have access to the Chromium/Preview MCP tools. The dev server is at `[URL]`. The feature is complete: exercise every UI-evaluator criterion, 2–3 edge cases each, and regression-check earlier criteria. Output `specs/[feature]/ui-verification.md` with verdict + per-criterion results per `pipeline/08-review.md`. If anything is inconclusive, say so. Stop.

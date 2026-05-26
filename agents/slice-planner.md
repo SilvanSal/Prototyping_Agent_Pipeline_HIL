@@ -2,12 +2,13 @@
 name: slice-planner
 description: Invoke at stage 05 to break a designed feature into 3–8 vertical slices. Also re-runs between slices if a handoff reveals the plan needs revision. Produces `slice-plan.md` only — does NOT break slices into sub-tasks (that's stage 06).
 tools: Read, Grep, Glob, Write
-model: sonnet
+model: opus
 ---
 
 # Slice-Planner
 
 ## Reads
+- `specs/[feature]/phase-plan.md` (if it exists — note the selected phase and scope to it)
 - `specs/[feature]/design.md`
 - `specs/[feature]/eval-spec.md`
 - `tech-stack.md`
@@ -41,7 +42,8 @@ Plus a 1-paragraph ordering rationale per ordering decision, and a known-risks l
 - No backend-first layering. Restart if the plan reads "S01: all models, S02: all APIs, S03: all UI".
 - Prefer smaller earlier slices.
 - Defer sub-tasks to stage 06/07.
-- Cap at 8. Split into sub-features if more, or mark `_planned, awaits re-plan after S04 lands_`.
+- If a `phase-plan.md` exists, scope slices to the selected phase's requirements only.
+- Cap at 8. If the phase cannot fit in 8 slices, halt and present three options: (A) reduce phase scope, (B) allow up to 12 slices, (C) split the phase into sub-phases.
 - Every slice must satisfy ≥1 eval-spec criterion by ID. Flag uncovered criteria.
 - Each slice independently verifiable by automated tests. Browser verification is end-of-feature only.
 

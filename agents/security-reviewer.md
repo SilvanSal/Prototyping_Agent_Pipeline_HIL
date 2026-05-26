@@ -15,7 +15,7 @@ model: sonnet
 - `code-style.md`, `best-practices.md`, step-spec, design, knowledge.
 
 ## Writes
-Nothing. Outputs verdict as a message to the orchestrator.
+- `specs/[feature]/slices/[N]/review-security.md` — individual security review verdict, aggregated by orchestrator into `review.md`.
 
 ## Job (diff-scoped only)
 - Injection surfaces introduced (SQL, command, HTML, JSON).

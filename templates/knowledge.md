@@ -2,15 +2,15 @@
 
 _Feature: [feature-slug] · Slice: [S0N] · Research pass: [YYYY-MM-DD]_
 
-> **Refresh policy:** re-verify on any version bump of the pinned libraries below. Default expiry: 90 days.
+> **Refresh policy:** re-verify when any library's pinned version changes in `tech-stack.md`. Version match is the staleness signal, not elapsed time.
 > **Scope:** external reference only. Conventions and style are in `best-practices.md` / `code-style.md`, which the Coder reads separately.
 
 ## Pinned versions (non-negotiable for this slice)
 
-| Library / runtime | Version | Why this version |
-|---|---|---|
-| [e.g., requests] | [==2.31.0] | [matches tech-stack.md] |
-| | | |
+| Library / runtime | Pinned version | Last verified | Version source |
+|---|---|---|---|
+| [e.g., requests] | [==2.31.0] | [YYYY-MM-DD] | tech-stack.md |
+| | | | |
 
 ## API / library reference
 

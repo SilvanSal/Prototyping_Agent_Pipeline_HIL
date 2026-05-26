@@ -52,14 +52,16 @@ You will run these in strict order. Each stage has a stop condition. Do not skip
 02  research-codebase       (Codebase-Explorer)  → CLAUDE.md + tech-stack.md + code-style.md + best-practices.md
 03  clarify                 (orchestrator + user)→ specs/clarify-[feature].md
 04  requirements-design     (Architect)          → specs/[feature]/{requirements,design,eval-spec}.md
+     (04.3  architect Q&A)  (conditional)        → specs/[feature]/architect-qa.md (only if Q&A gate fires)
+04.5  phase-planning        (Phase-Planner)      → specs/[feature]/phase-plan.md
 05  plan-slices             (Slice-Planner)      → specs/[feature]/slice-plan.md
 ─── loop per slice ───
 05.5  drift-check           (orchestrator)       → halt-and-surface if repo drifted since last handoff (see below)
-06  research-step           (Step-Researcher)    → specs/[feature]/slices/[N]/knowledge.md
-07  execute-step            (Coder, TDD)         → code + commits (RED/GREEN)
+06  research-step           (Step-Researcher)    → specs/[feature]/slices/[N]/{step-spec,knowledge}.md
+07  execute-step            (Coder, TDD)         → code + commits + test-run.md + touched-files.txt
      07a eval-harness        (conditional read)   only if step-spec has LLM evals
-08  review                  (Review cluster)     → specs/[feature]/slices/[N]/review.md
-09  write-handoff           (Handoff-Writer)     → specs/[feature]/slices/[N]/handoff.md
+08  review                  (Review cluster)     → review-code.md + review-security.md → review.md
+09  write-handoff           (Handoff-Writer)     → specs/[feature]/slices/[N]/handoff.md + session-log append
                             → auto-advance to next slice (or end-of-feature)
 ─── end loop ───
 10  pipeline-critique       (Pipeline-Critic)    → PIPELINE_IMPROVEMENT_CRITIQUE/[feature]-[date].md
@@ -89,6 +91,8 @@ The orchestrator advances automatically between stages. It pauses ONLY at human 
 | Intake Q&A | After stage 00.5 | User answers 5–10 A/B/C/D questions |
 | Clarify | After stage 01 research completes | User answers A/B/C/D questions and says "Go" (stage 03) |
 | Async expert rounds | During stage 01 (async mode only) | Operator returns expert answers as `expert-answers-R[N].md` |
+| Architect Q&A | During stage 04 (conditional) | Architect presents ≤3 questions; user answers |
+| Phase plan approval | After stage 04.5 | User approves phase plan and selects a phase |
 | Slice plan approval | After stage 05 | User approves the slice plan |
 | Block verdict | After stage 08 review | Return to stage 07 with fixes |
 | Iteration loop | After stage 10 critique + nudge | User describes next change (loops) or says "done" (exits) |
@@ -156,10 +160,10 @@ Humans edit the repo between slices. If the next step-spec is generated against 
 **When to run:** immediately before dispatching stage 06 for slice `N`, where `N ≥ 2`. Skip for `N = 1`.
 
 **What to run (orchestrator, not a subagent):**
-1. Read `specs/[feature]/slices/[N-1]/handoff.md`. Note the commit SHAs it lists under "Links → Commits".
+1. Read `specs/[feature]/slices/[N-1]/touched-files.txt` (the authoritative record of what Stage 07 modified). If this file does not exist (legacy slice), fall back to the file list in `step-spec.md`.
 2. `git status --porcelain` — any uncommitted changes?
 3. `git log --name-only [last handoff SHA]..HEAD` — which files changed since the last slice landed?
-4. Cross-reference changed files against slice `N-1`'s declared file list (from its `step-spec.md`). Anything outside that list is **drift**.
+4. Compute: files changed in git (step 2 + 3) that are NOT in `touched-files.txt`. Anything outside that list is **drift**.
 
 **If drift is detected, HALT and surface to the user:**
 - The list of drifted files (uncommitted + committed-outside-scope).
@@ -173,6 +177,42 @@ Humans edit the repo between slices. If the next step-spec is generated against 
 - The orchestrator **never** edits `tech-stack.md`, `slice-plan.md`, or any spec file as part of this check. It only detects and reports.
 - The orchestrator **never** runs `git reset`, `git restore`, or any destructive command here. Revert is always the user's action.
 - If stage 02 is re-run under "absorb", the user must see and approve its diff before stage 06 proceeds. No chained auto-absorb.
+
+## Token resolution
+
+Runtime tokens in dispatch prompts and file paths must be resolved by the orchestrator before use:
+
+- **`[feature]`** = the feature slug set by the user at Stage 03, stored in `specs/constitution.md` under the active feature field. Example: `auth`, `search-pipeline`.
+- **`[N]`** = the current slice number, taken from `specs/[feature]/slice-plan.md`. The orchestrator reads the slice plan and picks the next slice whose status is not `completed`. Slice IDs use no leading zeros (`1`, `2`, not `01`, `02`).
+- **`[phase]`** = the phase ID selected by the user at Stage 04.5, stored in `specs/[feature]/phase-plan.md` under the "Selected phase" section.
+
+## Required outputs per stage (gate check)
+
+After each subagent returns, the orchestrator MUST verify the filesystem for the stage's required outputs. If any required output is missing or empty (0 bytes or only the template header), DO NOT advance. Output: "Stage [N] incomplete: expected [file] does not exist. Re-run the stage."
+
+| Stage | Required outputs before advancing |
+|-------|----------------------------------|
+| 00 | `specs/constitution.md` |
+| 00.5 | `specs/intake-brief.md`, `specs/intake-qa.md` |
+| 01 | `specs/research/domain.md`, `specs/error-registry.md` |
+| 02 | `CLAUDE.md`, `tech-stack.md`, `code-style.md`, `best-practices.md` |
+| 03 | `specs/clarify-[feature].md` |
+| 04 | `specs/[feature]/requirements.md`, `specs/[feature]/design.md`, `specs/[feature]/eval-spec.md` |
+| 04.5 | `specs/[feature]/phase-plan.md` (with "Selected phase" filled) |
+| 05 | `specs/[feature]/slice-plan.md` |
+| 06 | `specs/[feature]/slices/[N]/step-spec.md`, `specs/[feature]/slices/[N]/knowledge.md` |
+| 07 | `specs/[feature]/slices/[N]/test-run.md`, `specs/[feature]/slices/[N]/touched-files.txt` + committed code |
+| 08 | `specs/[feature]/slices/[N]/review-code.md`, `specs/[feature]/slices/[N]/review-security.md`, `specs/[feature]/slices/[N]/review.md` |
+| 09 | `specs/[feature]/slices/[N]/handoff.md` |
+
+## Session-start pre-flight (returning sessions)
+
+When resuming after context overflow or a new session, check before dispatching any stage:
+
+1. Is `specs/[feature]/session-log.md` present? If yes, read the last entry to determine current status (which phase, which slice, last review verdict).
+2. Is the last slice's `handoff.md` present? If yes, read it before dispatching Stage 06.
+3. Is `specs/[feature]/phase-plan.md` present? If yes, confirm which phase is active.
+4. If any of these are missing despite earlier stages having run, surface a warning before proceeding.
 
 ## First action
 
@@ -188,5 +228,9 @@ Check the target project directory for existing artifacts to determine where to 
    Wait for the user, then read `pipeline/00.5-intake-reader.md` and dispatch the Intake-Reader.
 
 3. **After intake is complete:** proceed to Stage 01.
+
+4. **After Stage 04 completes:** check for `specs/[feature]/architect-qa.md`. If present, the Architect Q&A gate fired and answers are recorded — proceed. Dispatch the Phase-Planner (Stage 04.5). Wait for `specs/[feature]/phase-plan.md` with "Selected phase" filled before dispatching Stage 05.
+
+5. **After Stage 04.5 completes:** dispatch Stage 05 (Slice-Planner), which reads `phase-plan.md` and scopes to the selected phase.
 
 Do not read any stage file beyond the one you are currently executing.

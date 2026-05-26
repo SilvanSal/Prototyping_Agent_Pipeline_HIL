@@ -38,13 +38,13 @@ model: sonnet
 - API/library reference — exact endpoints, function signatures, config shapes, with source URLs.
 - Gotchas/footguns — with StackOverflow / GitHub issue / changelog citations.
 - Minimal working example from official docs.
-- Refresh policy — default every 90 days, override on version bumps.
+- Refresh policy — re-verify when any library's pinned version changes in `tech-stack.md` (version-based, not time-based).
 - **Eval framework section (only if this slice has non-deterministic criteria):** pick a free, open-source eval framework based on the project's language and test runner. Options: hand-rolled (always available), promptfoo (JS/TS), deepeval (Python/pytest), Inspect AI (safety evals). Document the choice, install command, and integration method. See `pipeline/07a-eval-harness.md` § "Free eval framework options" for selection rules.
 
 ## Dedup + trap surfacing (one pass, before drafting knowledge.md)
 - For each library/API this slice touches, grep the five sources above for keywords.
-- Current match (timestamp < 90 days AND pinned version matches `tech-stack.md`): add a `See also:` pointer in this slice's `knowledge.md` and skip re-researching that topic.
-- Stale match or version drift: ignore it, research fresh, and flag the stale prior entry in the output.
+- Current match (pinned version matches `tech-stack.md`): add a `See also:` pointer in this slice's `knowledge.md` and skip re-researching that topic.
+- Stale match (pinned version differs from `tech-stack.md`, or no `pinned-version` field): ignore it, research fresh. Flag the stale entry: `STALE: tech-stack.md now pins [new]; entry was for [old].` When researching fresh on a version-bumped library, explicitly search for migration guides, breaking changes, and regressions between the old and new versions.
 - For hallucination-traps / error-registry matches: surface them as one-line pointers in `knowledge.md` § "Gotchas and footguns". Do NOT edit those files.
 - Full rules: `pipeline/06-research-step.md` § "Dedup check" and § "Hallucination-traps + error-registry surfacing".
 

@@ -22,7 +22,8 @@ model: sonnet
 - Any Coder chat output — grounds only in forgery-resistant artifacts.
 
 ## Writes
-- `specs/[feature]/slices/[N]/handoff.md` only.
+- `specs/[feature]/slices/[N]/handoff.md`
+- Appends one line to `specs/[feature]/session-log.md` (create from `templates/session-log.md` if it doesn't exist). Format: `| [YYYY-MM-DD] | [phase] | [slice ID] | [status] | [review verdict] | [handoff path] |`
 
 ## Job
 Produce a 300–500 word handoff (hard cap 600) with these 7 sections (per `templates/handoff.md`):
@@ -33,6 +34,16 @@ Produce a 300–500 word handoff (hard cap 600) with these 7 sections (per `temp
 5. Reviewer notes carried forward — `pass-with-notes` items from `review.md`.
 6. What is NOT done — explicit out-of-scope items surfaced during this slice.
 7. Test / eval state — by ID: which eval criteria are green / red / untested.
+
+## Session log
+
+After writing `handoff.md`, append one line to `specs/[feature]/session-log.md`:
+
+```
+| YYYY-MM-DD | P[phase] | S[N] | completed|blocked|partial | pass|pass-with-notes|block | specs/[feature]/slices/[N]/handoff.md |
+```
+
+Create the file from `templates/session-log.md` if it doesn't exist.
 
 ## Hard rules
 - Ground every claim in an artifact. "We chose Redis" → cite the commit. No claims that can't be traced.
